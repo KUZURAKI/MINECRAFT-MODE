@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-color: green;
+
+  --color: #fff;
+
+  --transition: 0.3s ease-in-out;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--color);
+  transition: var(--transition);
+  font-family: "Press Start 2P", system-ui;
+}
+
+.container {
+  max-width: 800px;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+h1,
+p {
+  letter-spacing: 1px;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+p {
+  font-size: 1.2rem;
+}

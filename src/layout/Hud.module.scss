@@ -1,0 +1,237 @@
+$edge: #000;
+$ease: cubic-bezier(0.3, 1.6, 0.5, 1);
+
+.hud {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  user-select: none;
+}
+
+.vitals {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+/* ---------- bars ---------- */
+.bar {
+  --c: #ff4d4d;
+  --c-dark: #4a0d12;
+  --glow: rgba(255, 77, 77, 0.55);
+  display: flex;
+  position: relative;
+  align-items: center;
+  gap: 8px;
+  padding-left: 40px;
+  --rot: -14deg;
+
+  &.food {
+    --c: #ffb23e;
+    --c-dark: #4a2c08;
+    --glow: rgba(255, 178, 62, 0.5);
+    --rot: 12deg;
+  }
+}
+
+// absolute: sticks out left and overlaps bar start, tilted per bar
+.badge {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 54px;
+  height: 54px;
+  margin-top: -27px;
+  rotate: var(--rot);
+  z-index: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px var(--glow)) drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.6));
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+  }
+}
+
+.low .badge {
+  animation: beat 0.7s ease-in-out infinite;
+}
+
+.cells {
+  display: flex;
+  gap: 4px;
+  transform: skewX(-20deg);
+  filter: drop-shadow(0 0 6px var(--glow));
+}
+
+.cell {
+  position: relative;
+  width: 17px;
+  height: 14px;
+  background: var(--c-dark);
+  outline: 2px solid $edge;
+  overflow: hidden;
+}
+
+.fill,
+.ghost {
+  position: absolute;
+  inset: 0 auto 0 0;
+}
+
+.fill {
+  background: linear-gradient(var(--c), var(--c) 55%, color-mix(in srgb, var(--c) 60%, #000));
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.45);
+  transition: width 0.15s steps(3);
+}
+
+.ghost {
+  background: #fff;
+  transition: width 0.7s ease-in 0.45s;
+}
+
+.num {
+  font-size: 9px;
+  opacity: 0.8;
+  text-shadow: 2px 2px 0 #000;
+  min-width: 2ch;
+}
+
+/* ---------- slots: zigzag diamonds ---------- */
+.slots {
+  display: flex;
+  padding-left: 4px;
+}
+
+.slot {
+  position: relative;
+  width: 58px;
+  height: 78px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  margin-right: -6px;
+
+  &:nth-child(even) {
+    margin-top: 22px;
+  }
+}
+
+.gem {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 42px;
+  height: 42px;
+  transform: rotate(45deg) scale(0.88);
+  background: rgba(10, 8, 20, 0.62);
+  border: 3px solid $edge;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.18),
+    0 4px 0 rgba(0, 0, 0, 0.5);
+  display: grid;
+  place-items: center;
+  opacity: 0.75;
+  transition:
+    transform 0.25s $ease,
+    opacity 0.2s,
+    box-shadow 0.2s;
+}
+
+.icon {
+  display: block;
+  transform: rotate(-45deg);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.slot:hover .gem {
+  opacity: 1;
+}
+
+.active .gem {
+  opacity: 1;
+  transform: rotate(45deg) scale(1.2);
+  background: linear-gradient(135deg, rgba(255, 214, 102, 0.35), rgba(10, 8, 20, 0.7));
+  box-shadow:
+    inset 0 0 0 2px #ffd666,
+    0 0 0 2px $edge,
+    0 0 20px rgba(255, 214, 102, 0.65);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border: 2px solid #ffd666;
+    animation: ring 1.6s ease-out infinite;
+  }
+}
+
+.key,
+.count {
+  position: absolute;
+  font-size: 7px;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.key {
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  opacity: 0.5;
+}
+
+.count {
+  right: -2px;
+  bottom: 22px;
+}
+
+// durability: thin bar under gem, colour shifts green -> red
+.dur {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  height: 4px;
+  background: $edge;
+  outline: 1px solid $edge;
+
+  span {
+    display: block;
+    height: 100%;
+    background: hsl(calc(var(--d) * 120), 85%, 55%);
+  }
+}
+
+/* ---------- low-hp vignette ---------- */
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 160px 30px rgba(200, 0, 20, 0.55);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.2); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.12); }
+}
+
+@keyframes ring {
+  from { opacity: 0.9; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.7); }
+}
+
+@keyframes pulse {
+  50% { opacity: 0.45; }
+}
