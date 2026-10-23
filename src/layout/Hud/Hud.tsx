@@ -1,20 +1,18 @@
 import { useEffect, useState } from "preact/hooks";
 import style from "./Hud.module.scss";
-
-type Slot = { icon: string; name: string; count?: number; durability?: number };
-
-const slots: Slot[] = [
-  { icon: "⚔️", name: "Алмазный меч", durability: 0.72 },
-  { icon: "⛏️", name: "Железная кирка", durability: 0.35 },
-  { icon: "🍖", name: "Жареная свинина", count: 12 },
-  { icon: "🔥", name: "Факел", count: 48 },
-  { icon: "🧪", name: "Зелье скорости", count: 3 },
-];
+import { slots } from "./Hud.tupe";
 
 const clamp = (n: number) => Math.min(Math.max(n, 0), 20);
 
-// 10 slanted cells x 2 points; ghost layer lags behind to show lost points
-const Bar = ({ value, kind, icon }: { value: number; kind: "hp" | "food"; icon: string }) => (
+const Bar = ({
+  value,
+  kind,
+  icon,
+}: {
+  value: number;
+  kind: "hp" | "food";
+  icon: string;
+}) => (
   <div className={`${style.bar} ${style[kind]} ${value <= 6 ? style.low : ""}`}>
     <div className={style.badge}>
       <img src={icon} alt="" />
@@ -39,7 +37,6 @@ const Hud = () => {
   const [hp, setHp] = useState(13);
   const [food, setFood] = useState(16);
 
-  // demo controls: 1-5 slot, ↓/↑ hp, ←/→ food
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const n = Number(e.key);
@@ -76,7 +73,12 @@ const Hud = () => {
               {s.count && <span className={style.count}>×{s.count}</span>}
               {s.durability !== undefined && (
                 <span className={style.dur}>
-                  <span style={{ width: `${s.durability * 100}%`, ["--d" as string]: s.durability }} />
+                  <span
+                    style={{
+                      width: `${s.durability * 100}%`,
+                      ["--d" as string]: s.durability,
+                    }}
+                  />
                 </span>
               )}
             </button>

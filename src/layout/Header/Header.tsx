@@ -1,11 +1,12 @@
 import style from "./Header.module.scss";
+import { biom } from "./Header.type";
 
 const Header = () => {
   return (
     <section className={style.header}>
       <div className={`container ${style.container}`}>
-        <h1>ЗИМНИЙ БИОМ</h1>
-        <p>Ваш лучший выбор для вашего биома</p>
+        <h2>{biom[0].name}</h2>
+        <p>{biom[0].info}</p>
       </div>
     </section>
   );
