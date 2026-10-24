@@ -114,6 +114,7 @@ const Vitals = ({
             <img src="/eat.png" alt="" />
           </div>
           <Cells value={food} small />
+          {fx?.kind === "hunger" && <i key={fx.n} className={style.rowFlash} />}
         </div>
         <div
           className={`${style.row} ${style.need} ${style.water} ${water <= 4 ? style.low : ""}`}
@@ -122,6 +123,7 @@ const Vitals = ({
             <img src="/vater.png" alt="" />
           </div>
           <Cells value={water} small />
+          {fx?.kind === "thirst" && <i key={fx.n} className={style.rowFlash} />}
         </div>
       </div>
 
