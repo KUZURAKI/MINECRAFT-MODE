@@ -4,6 +4,7 @@ import { slots } from "./Hud.tupe";
 import Vitals from "./Vitals";
 import Hotbar from "./Hotbar";
 import Blood from "./Blood";
+import { AsciiBg } from "../Ascii";
 
 const MAX = 20;
 // walks a displayed value toward its target one point at a time (heal and damage both animate)
@@ -34,14 +35,15 @@ const Hud = () => {
   const [bleed, setBleed] = useState(0);
   const [diving, setDiving] = useState(false);
   const [air, setAir] = useState(MAX);
-  const [fx, setFx] = useState<{ kind: "heal" | "hit"; n: number } | null>(
-    null,
-  );
+  const [fx, setFx] = useState<{
+    kind: "heal" | "hit" | "hunger" | "thirst";
+    n: number;
+  } | null>(null);
 
   const [barShown, setBarShown] = useState(true);
   const hideTimer = useRef(0);
 
-  const flash = (kind: "heal" | "hit") =>
+  const flash = (kind: "heal" | "hit" | "hunger" | "thirst") =>
     setFx((f) => ({ kind, n: (f?.n ?? 0) + 1 }));
 
   const reveal = () => {
@@ -108,6 +110,34 @@ const Hud = () => {
     return () => clearInterval(t);
   }, [diving, air]);
 
+  // food and water slowly drop; at 0 each one hurts in its own way
+  useEffect(() => {
+    const f = setInterval(() => setFood((v) => clamp(v - 1)), 15000);
+    const w = setInterval(() => setWater((v) => clamp(v - 1)), 10000);
+    return () => {
+      clearInterval(f);
+      clearInterval(w);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (food > 0) return;
+    const t = setInterval(() => {
+      setHp((v) => clamp(v - 1));
+      flash("hunger");
+    }, 3000);
+    return () => clearInterval(t);
+  }, [food <= 0]);
+
+  useEffect(() => {
+    if (water > 0) return;
+    const t = setInterval(() => {
+      setHp((v) => clamp(v - 1));
+      flash("thirst");
+    }, 2000);
+    return () => clearInterval(t);
+  }, [water <= 0]);
+
   const use = () => {
     reveal();
     const s = items[active];
@@ -143,6 +173,8 @@ const Hud = () => {
       if (k === "k") setBleed((b) => (b + 1) % 4);
       if (k === "x") gainXp(25);
       if (k === "o") setDiving((d) => !d);
+      if (e.key === "ArrowLeft") setFood((v) => clamp(v - 4));
+      if (e.key === "ArrowRight") setWater((v) => clamp(v - 4));
       if (e.key === "ArrowDown") {
         setHp((v) => clamp(v - 3));
         flash("hit");
@@ -155,7 +187,19 @@ const Hud = () => {
   return (
     <>
       {hp <= 6 && (
-        <div className={`${style.vignette} ${hp <= 3 ? style.critical : ""}`} />
+        <>
+          <div
+            className={`${style.vignette} ${hp <= 3 ? style.critical : ""}`}
+          />
+          {/* shortcut: grid sized once from the window, no resize handling; add a resize listener if the HUD must survive window changes */}
+          <AsciiBg
+            className={`${style.redAscii} ${hp <= 3 ? style.critical : ""}`}
+            cols={Math.ceil(window.innerWidth / 12)}
+            rows={Math.ceil(window.innerHeight / 16)}
+            ms={120}
+            forever
+          />
+        </>
       )}
       {hp <= 6 && <Blood count={hp <= 3 ? 14 : 5} />}
       <aside className={style.hud}>

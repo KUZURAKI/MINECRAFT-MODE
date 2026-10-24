@@ -2,7 +2,7 @@ import { useRef } from "preact/hooks";
 import style from "./Hud.module.scss";
 import { AsciiBg, Scramble } from "../Ascii";
 
-type Fx = { kind: "heal" | "hit"; n: number } | null;
+type Fx = { kind: "heal" | "hit" | "hunger" | "thirst"; n: number } | null;
 
 // each cell is 2 points and snaps: empty -> half -> full (no smooth fill)
 const Cells = ({ value, small }: { value: number; small?: boolean }) => (
@@ -12,6 +12,13 @@ const Cells = ({ value, small }: { value: number; small?: boolean }) => (
       return (
         <div key={i} className={style.cell}>
           <div className={style.fill} style={{ width: `${pts * 50}%` }} />
+          <span className={style.glyph}>
+            <Scramble
+              start={i}
+              text={pts === 2 ? "#" : pts === 1 ? "=" : "."}
+              rate={0.5}
+            />
+          </span>
         </div>
       );
     })}
@@ -69,9 +76,6 @@ const Vitals = ({
             style={{ width: `${(xp / need) * 100}%` }}
           />
         </div>
-        <span className={style.num}>
-          <Scramble text={xp + "/" + need} rate={0.4} />
-        </span>
       </div>
 
       <div
@@ -93,9 +97,6 @@ const Vitals = ({
             ))}
         </div>
         <Cells value={hp} />
-        <span className={style.num}>
-          <Scramble text={String(Math.ceil(hp))} rate={0.3} />
-        </span>
       </div>
 
       {/* collapses to 0 height; food + water slide up/down with it */}
@@ -113,13 +114,17 @@ const Vitals = ({
       </div>
 
       <div className={style.needs}>
-        <div className={`${style.row} ${style.need} ${style.food}`}>
+        <div
+          className={`${style.row} ${style.need} ${style.food} ${food <= 4 ? style.low : ""}`}
+        >
           <div className={style.mini}>
             <img src="/eat.png" alt="" />
           </div>
           <Cells value={food} small />
         </div>
-        <div className={`${style.row} ${style.need} ${style.water}`}>
+        <div
+          className={`${style.row} ${style.need} ${style.water} ${water <= 4 ? style.low : ""}`}
+        >
           <div className={style.mini}>
             <img src="/vater.png" alt="" />
           </div>
@@ -138,9 +143,6 @@ const Vitals = ({
                 <img src="/kis.png" alt="" />
               </div>
               <Cells value={air} small />
-              <span className={style.tag}>
-                <Scramble key={+airShown} text="ВОЗДУХ" rate={0.5} />
-              </span>
             </div>
           </div>
         </div>
