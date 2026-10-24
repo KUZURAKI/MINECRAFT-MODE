@@ -52,10 +52,10 @@ const Vitals = ({
   hp,
   food,
   water,
-  lvl,
-  xp,
-  need,
-  lvlUp,
+  // lvl,
+  // xp,
+  // need,
+  // lvlUp,
   bleed,
   air,
   airShown,
@@ -71,6 +71,7 @@ const Vitals = ({
       <AsciiBg className={style.hudBg} cols={44} rows={13} ms={140} forever />
       {fx && <div key={fx.n} className={`${style.fx} ${style[fx.kind]}`} />}
 
+      {/*
       <div className={`${style.row} ${style.xp}`}>
         <div key={lvlUp} className={`${style.lvl} ${lvlUp ? style.up : ""}`}>
           <img src="/lvl.png" alt="" />
@@ -80,6 +81,7 @@ const Vitals = ({
         </div>
         <Cells value={(xp / need) * 20} />
       </div>
+      */}
 
       <div
         className={`${style.row} ${style.hp} ${hp <= 6 ? style.low : ""} ${hp <= 3 ? style.critical : ""} ${bleeding ? style.bleeding : ""}`}

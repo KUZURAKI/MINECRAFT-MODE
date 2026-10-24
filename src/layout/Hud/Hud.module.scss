@@ -302,8 +302,8 @@ $edge: #000;
   line-height: 11px;
   letter-spacing: 0;
   white-space: pre;
-  color: #fff;
-  opacity: 0.16;
+  color: #000;
+  opacity: 0.3;
   pointer-events: none;
   mask-image: radial-gradient(ellipse at 40% 45%, #000 15%, transparent 70%);
 }
@@ -360,25 +360,25 @@ $edge: #000;
 
 .fx {
   position: absolute;
-  inset: -24px;
+  inset: -70px;
   pointer-events: none;
   z-index: 2;
   opacity: 0;
 
   &.heal {
     background: radial-gradient(
-      circle at 20% 35%,
+      ellipse closest-side at 30% 40%,
       rgba(120, 255, 160, 0.7),
-      transparent 70%
+      transparent
     );
     animation: fx 0.8s ease-out;
   }
 
   &.hit {
     background: radial-gradient(
-      circle at 20% 35%,
+      ellipse closest-side at 30% 40%,
       rgba(255, 60, 60, 0.75),
-      transparent 70%
+      transparent
     );
     animation: fx 0.5s ease-out;
   }
