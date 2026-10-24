@@ -1,4 +1,5 @@
 import style from "./Hud.module.scss";
+import { Scramble } from "../Ascii";
 import type { Slot } from "./Hud.tupe";
 
 const Hotbar = ({
@@ -21,9 +22,15 @@ const Hotbar = ({
         onClick={() => onSelect(i)}
       >
         <span className={style.icon}>{s.icon}</span>
-        <span className={style.key}>{i + 1}</span>
+        <span className={style.key}>
+          <Scramble text={String(i + 1)} />
+        </span>
         {i === active && <i className={style.dot} />}
-        {!!s.count && <span className={style.count}>{s.count}</span>}
+        {!!s.count && (
+          <span className={style.count}>
+            <Scramble text={String(s.count)} rate={0.4} />
+          </span>
+        )}
         {s.durability !== undefined && (
           <span className={style.dur}>
             <span

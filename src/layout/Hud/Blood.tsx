@@ -17,8 +17,10 @@ const makeSplat = () => {
   for (let dy = -R - 3; dy <= R + 3; dy++)
     for (let dx = -R - 3; dx <= R + 3; dx++) {
       const d = Math.hypot(dx, dy);
-      const keep = d <= R ? rnd() < 1.1 - d / (R + 1) : d <= R + 3 && rnd() < 0.05;
-      if (keep) cells.push(`${dx * u}px ${dy * u}px 0 ${REDS[Math.floor(rnd() * 3)]}`);
+      const keep =
+        d <= R ? rnd() < 1.1 - d / (R + 1) : d <= R + 3 && rnd() < 0.05;
+      if (keep)
+        cells.push(`${dx * u}px ${dy * u}px 0 ${REDS[Math.floor(rnd() * 3)]}`);
     }
   return {
     u,

@@ -32,6 +32,8 @@ const Hud = () => {
   const [xp, setXp] = useState(20);
   const [lvlUp, setLvlUp] = useState(0);
   const [bleed, setBleed] = useState(0);
+  const [diving, setDiving] = useState(false);
+  const [air, setAir] = useState(MAX);
   const [fx, setFx] = useState<{ kind: "heal" | "hit"; n: number } | null>(
     null,
   );
@@ -56,6 +58,7 @@ const Hud = () => {
   const shownHp = useStep(hp);
   const shownFood = useStep(food);
   const shownWater = useStep(water);
+  const shownAir = useStep(air, 70);
 
   const need = 40 + lvl * 20;
 
@@ -85,6 +88,25 @@ const Hud = () => {
     const t = setInterval(() => setHp((v) => clamp(v - 1)), BLEED_MS[bleed]);
     return () => clearInterval(t);
   }, [bleed]);
+
+  // underwater: air drains 1 point per 0.7s, at 0 you drown (-2 hp per tick);
+  // surfaced: air refills fast, the bar slides away once full
+  useEffect(() => {
+    if (!diving && air >= MAX) return;
+    const t = setInterval(
+      () => {
+        if (diving) {
+          if (air > 0) setAir((a) => a - 1);
+          else {
+            setHp((v) => clamp(v - 2));
+            flash("hit");
+          }
+        } else setAir((a) => Math.min(a + 2, MAX));
+      },
+      diving ? 700 : 120,
+    );
+    return () => clearInterval(t);
+  }, [diving, air]);
 
   const use = () => {
     reveal();
@@ -120,6 +142,7 @@ const Hud = () => {
       if (k === "f") use();
       if (k === "k") setBleed((b) => (b + 1) % 4);
       if (k === "x") gainXp(25);
+      if (k === "o") setDiving((d) => !d);
       if (e.key === "ArrowDown") {
         setHp((v) => clamp(v - 3));
         flash("hit");
@@ -145,6 +168,8 @@ const Hud = () => {
           need={need}
           lvlUp={lvlUp}
           bleed={bleed}
+          air={shownAir}
+          airShown={diving || air < MAX}
           fx={fx}
         />
       </aside>
@@ -155,7 +180,8 @@ const Hud = () => {
         onSelect={select}
       />
       <p className={style.hint}>
-        1-7 слот · F применить · ↓ урон · K кровотечение · X опыт · B биом
+        1-7 слот · F применить · ↓ урон · K кровотечение · X опыт · O вода · B
+        биом
       </p>
     </>
   );

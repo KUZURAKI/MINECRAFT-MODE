@@ -1,5 +1,6 @@
 import { useRef } from "preact/hooks";
 import style from "./Hud.module.scss";
+import { AsciiBg, Scramble } from "../Ascii";
 
 type Fx = { kind: "heal" | "hit"; n: number } | null;
 
@@ -17,16 +18,6 @@ const Cells = ({ value, small }: { value: number; small?: boolean }) => (
   </div>
 );
 
-const Drop = () => (
-  <svg viewBox="0 0 9 12" shape-rendering="crispEdges">
-    <path
-      d="M4 0h1v2h1v2h1v2h1v4h-1v1h-1v1h-3v-1h-1v-1h-1v-4h1v-2h1v-2h1z"
-      fill="#4db8ff"
-    />
-    <path d="M2 7h1v2h-1z" fill="#fff" opacity=".6" />
-  </svg>
-);
-
 type Props = {
   hp: number;
   food: number;
@@ -36,6 +27,8 @@ type Props = {
   need: number;
   lvlUp: number;
   bleed: number;
+  air: number;
+  airShown: boolean;
   fx: Fx;
 };
 
@@ -48,6 +41,8 @@ const Vitals = ({
   need,
   lvlUp,
   bleed,
+  air,
+  airShown,
   fx,
 }: Props) => {
   const bleeding = bleed > 0;
@@ -58,12 +53,15 @@ const Vitals = ({
 
   return (
     <div className={style.vitals}>
+      <AsciiBg className={style.hudBg} cols={44} rows={13} ms={140} forever />
       {fx && <div key={fx.n} className={`${style.fx} ${style[fx.kind]}`} />}
 
       <div className={`${style.row} ${style.xp}`}>
         <div key={lvlUp} className={`${style.lvl} ${lvlUp ? style.up : ""}`}>
-          <small>LV</small>
-          {lvl}
+          <img src="/lvl.png" alt="" />
+          <span>
+            <Scramble text={String(lvl)} rate={0.3} />
+          </span>
         </div>
         <div className={style.xpbar}>
           <div
@@ -72,7 +70,7 @@ const Vitals = ({
           />
         </div>
         <span className={style.num}>
-          {xp}/{need}
+          <Scramble text={xp + "/" + need} rate={0.4} />
         </span>
       </div>
 
@@ -80,7 +78,7 @@ const Vitals = ({
         className={`${style.row} ${style.hp} ${hp <= 6 ? style.low : ""} ${hp <= 3 ? style.critical : ""} ${bleeding ? style.bleeding : ""}`}
       >
         <div className={style.badge}>
-          <img src="/1.png" alt="" />
+          <img src="/hp.png" alt="" />
           {bleeding &&
             Array.from({ length: bleed }, (_, i) => (
               <i
@@ -95,7 +93,9 @@ const Vitals = ({
             ))}
         </div>
         <Cells value={hp} />
-        <span className={style.num}>{Math.ceil(hp)}</span>
+        <span className={style.num}>
+          <Scramble text={String(Math.ceil(hp))} rate={0.3} />
+        </span>
       </div>
 
       {/* collapses to 0 height; food + water slide up/down with it */}
@@ -105,12 +105,8 @@ const Vitals = ({
             <span
               className={`${style.chip} ${style.bleed} ${style[`s${stage}`]}`}
             >
-              КРОВОТЕЧЕНИЕ
-              <em>
-                {[1, 2, 3].map((n) => (
-                  <i key={n} className={n <= stage ? style.on : ""} />
-                ))}
-              </em>
+              <img src={"/blod-" + stage + ".png"} alt="" />
+              <Scramble key={bleed} text="КРОВОТЕЧЕНИЕ" rate={0.6} />
             </span>
           </div>
         </div>
@@ -119,15 +115,34 @@ const Vitals = ({
       <div className={style.needs}>
         <div className={`${style.row} ${style.need} ${style.food}`}>
           <div className={style.mini}>
-            <img src="/2.png" alt="" />
+            <img src="/eat.png" alt="" />
           </div>
           <Cells value={food} small />
         </div>
         <div className={`${style.row} ${style.need} ${style.water}`}>
           <div className={style.mini}>
-            <Drop />
+            <img src="/vater.png" alt="" />
           </div>
           <Cells value={water} small />
+        </div>
+      </div>
+
+      {/* slides out under food/water while diving, and back once the lungs are full */}
+      <div className={`${style.air} ${airShown ? style.open : ""}`}>
+        <div>
+          <div className={style.airPad}>
+            <div
+              className={`${style.row} ${style.need} ${style.oxy} ${air <= 4 ? style.low : ""}`}
+            >
+              <div className={style.mini}>
+                <img src="/kis.png" alt="" />
+              </div>
+              <Cells value={air} small />
+              <span className={style.tag}>
+                <Scramble key={+airShown} text="ВОЗДУХ" rate={0.5} />
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
