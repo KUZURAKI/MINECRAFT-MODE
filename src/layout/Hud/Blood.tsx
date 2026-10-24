@@ -1,6 +1,5 @@
 import style from "./Hud.module.scss";
 
-// seeded rng: same splatter every time, no layout jumps between renders
 let seed = 7;
 const rnd = () => {
   seed = (seed * 16807) % 2147483647;
@@ -9,7 +8,6 @@ const rnd = () => {
 
 const REDS = ["#7a0610", "#a50e1a", "#c4182a"];
 
-// one pixel blob: dense core, ragged edge, a few stray droplets
 const makeSplat = () => {
   const u = 5 + Math.floor(rnd() * 5);
   const R = 2 + Math.floor(rnd() * 3);
@@ -35,7 +33,6 @@ const makeSplat = () => {
 
 const splats = Array.from({ length: 14 }, makeSplat);
 
-// count: how many splats are visible; same first N each time so none replay
 const Blood = ({ count }: { count: number }) => (
   <div className={style.blood2} aria-hidden="true">
     {splats.slice(0, count).map((s, i) => (

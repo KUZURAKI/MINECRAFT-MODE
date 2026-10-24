@@ -4,7 +4,6 @@ import { AsciiBg, Scramble } from "../Ascii";
 
 type Fx = { kind: "heal" | "hit" | "hunger" | "thirst"; n: number } | null;
 
-// each cell is 2 points and snaps: empty -> half -> full (no smooth fill)
 const Cells = ({ value, small }: { value: number; small?: boolean }) => (
   <div className={`${style.cells} ${small ? style.small : ""}`}>
     {Array.from({ length: 10 }, (_, i) => {
@@ -53,7 +52,6 @@ const Vitals = ({
   fx,
 }: Props) => {
   const bleeding = bleed > 0;
-  // keep the last stage so the chip doesn't change text while it collapses
   const last = useRef(1);
   if (bleed) last.current = bleed;
   const stage = last.current;
@@ -70,12 +68,7 @@ const Vitals = ({
             <Scramble text={String(lvl)} rate={0.3} />
           </span>
         </div>
-        <div className={style.xpbar}>
-          <div
-            className={style.fill}
-            style={{ width: `${(xp / need) * 100}%` }}
-          />
-        </div>
+        <Cells value={(xp / need) * 20} />
       </div>
 
       <div
@@ -99,15 +92,15 @@ const Vitals = ({
         <Cells value={hp} />
       </div>
 
-      {/* collapses to 0 height; food + water slide up/down with it */}
       <div className={`${style.status} ${bleeding ? style.open : ""}`}>
         <div>
           <div className={style.pad}>
-            <span
-              className={`${style.chip} ${style.bleed} ${style[`s${stage}`]}`}
-            >
+            <span className={`${style.chip} ${style[`s${stage}`]}`}>
               <img src={"/blod-" + stage + ".png"} alt="" />
               <Scramble key={bleed} text="КРОВОТЕЧЕНИЕ" rate={0.6} />
+              <b>
+                <Scramble key={bleed} text={String(stage)} rate={0.4} />
+              </b>
             </span>
           </div>
         </div>
@@ -132,7 +125,6 @@ const Vitals = ({
         </div>
       </div>
 
-      {/* slides out under food/water while diving, and back once the lungs are full */}
       <div className={`${style.air} ${airShown ? style.open : ""}`}>
         <div>
           <div className={style.airPad}>

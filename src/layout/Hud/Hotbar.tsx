@@ -1,6 +1,22 @@
+import { useEffect, useState } from "preact/hooks";
 import style from "./Hud.module.scss";
-import { Scramble } from "../Ascii";
+import { AsciiBg, Scramble } from "../Ascii";
 import type { Slot } from "./Hud.tupe";
+
+const SlotIcon = ({ icon, on }: { icon: string; on: boolean }) => {
+  const [glitch, setGlitch] = useState(false);
+  useEffect(() => {
+    if (!on) return;
+    setGlitch(true);
+    const t = setTimeout(() => setGlitch(false), 450);
+    return () => clearTimeout(t);
+  }, [on]);
+  return glitch ? (
+    <AsciiBg className={style.glitchIcon} cols={4} rows={3} ms={40} />
+  ) : (
+    <>{icon}</>
+  );
+};
 
 const Hotbar = ({
   items,
@@ -21,7 +37,10 @@ const Hotbar = ({
         className={`${style.slot} ${i === active ? style.active : ""} ${s.count === 0 ? style.empty : ""}`}
         onClick={() => onSelect(i)}
       >
-        <span className={style.icon}>{s.icon}</span>
+        <AsciiBg className={style.slotBg} cols={6} rows={4} ms={160} forever />
+        <span className={style.icon}>
+          <SlotIcon icon={s.icon} on={i === active} />
+        </span>
         <span className={style.key}>
           <Scramble text={String(i + 1)} />
         </span>

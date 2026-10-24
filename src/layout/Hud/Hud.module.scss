@@ -58,11 +58,11 @@ $edge: #000;
 
 .badge {
   position: absolute;
-  left: -2px;
+  left: 2px;
   top: 50%;
-  width: 50px;
-  height: 50px;
-  margin-top: -25px;
+  width: 56px;
+  height: 56px;
+  margin-top: -28px;
   rotate: -12deg;
   z-index: 1;
   pointer-events: none;
@@ -82,7 +82,6 @@ $edge: #000;
   animation: beat 0.7s ease-in-out infinite;
 }
 
-// 3 points or less: frantic heartbeat
 .critical .badge {
   animation-duration: 0.36s;
 }
@@ -91,10 +90,10 @@ $edge: #000;
   position: absolute;
   left: 0;
   top: 50%;
-  width: 34px;
-  height: 34px;
-  left: -4px;
-  margin-top: -17px;
+  width: 46px;
+  height: 46px;
+  left: -12px;
+  margin-top: -23px;
   rotate: 10deg;
   filter: drop-shadow(0 0 5px var(--glow))
     drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.6));
@@ -127,7 +126,6 @@ $edge: #000;
   height: 14px;
   background: var(--c-dark);
   outline: 2px solid $edge;
-  overflow: hidden;
 
   .small & {
     width: 8px;
@@ -135,7 +133,6 @@ $edge: #000;
   }
 }
 
-// ascii texture inside each block: # full, = half, . empty
 .glyph {
   position: absolute;
   inset: 0;
@@ -156,6 +153,14 @@ $edge: #000;
   animation: beat 0.5s ease-in-out infinite;
 }
 
+.xp .cell {
+  height: 6px;
+}
+
+.xp .glyph {
+  display: none;
+}
+
 .small {
   gap: 2px;
 }
@@ -166,27 +171,12 @@ $edge: #000;
   padding-left: 16px;
 }
 
-.xpbar {
-  position: relative;
-  width: 206px;
-  height: 6px;
-  background: var(--c-dark);
-  outline: 2px solid $edge;
-  transform: skewX(-20deg);
-  overflow: hidden;
-  filter: drop-shadow(0 0 4px var(--glow));
-}
-
-.xpbar .fill {
-  transition: width 0.4s ease-out;
-}
-
 .lvl {
   position: absolute;
   top: 50%;
   width: 58px;
   height: 58px;
-  left: -6px;
+  left: -2px;
   margin-top: -29px;
   rotate: 8deg;
   filter: drop-shadow(0 0 6px var(--glow))
@@ -200,7 +190,6 @@ $edge: #000;
     image-rendering: pixelated;
   }
 
-  // level number sits on the gem
   span {
     position: absolute;
     inset: 0;
@@ -257,9 +246,15 @@ $edge: #000;
   > div {
     min-height: 0;
     overflow: hidden;
+    transition: overflow 0s;
+    transition-behavior: allow-discrete;
   }
 
-  // padding lives inside the clipped box so nothing is left when closed
+  &.open > div {
+    overflow: visible;
+    transition-delay: 0.45s;
+  }
+
   .pad {
     padding: 2px 2px 8px 46px;
   }
@@ -279,7 +274,6 @@ $edge: #000;
   }
 }
 
-// faint shimmering symbols behind the vitals
 .hudBg {
   position: absolute;
   left: -14px;
@@ -298,38 +292,39 @@ $edge: #000;
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  position: relative;
-  font-size: 7px;
-  padding: 3px 10px 3px 5px;
-  text-shadow: 1px 1px 0 #000;
-  box-shadow:
-    0 0 0 2px $edge,
-    inset 1px 1px 0 rgba(255, 255, 255, 0.3);
-  overflow: hidden;
-}
-
-.bleed {
-  background: rgba(150, 10, 25, 0.65);
+  gap: 8px;
+  font-size: 8px;
+  color: #ff6a6a;
+  text-shadow:
+    1px 1px 0 #000,
+    0 0 8px rgba(255, 40, 40, 0.6);
 
   img {
-    width: 26px;
-    height: 26px;
-    margin: 0;
+    width: 30px;
+    height: 30px;
+    margin: -8px 0;
     object-fit: contain;
     image-rendering: pixelated;
   }
 
+  b {
+    font-size: 14px;
+    color: #fff;
+    text-shadow:
+      2px 2px 0 #000,
+      0 0 10px #ff2a3a;
+  }
+
   &.s1 {
-    background: rgba(140, 40, 40, 0.6);
+    color: #ffb0a0;
   }
 
   &.s2 {
-    background: rgba(170, 20, 30, 0.75);
+    color: #ff6a6a;
   }
 
   &.s3 {
-    background: rgba(200, 0, 20, 0.9);
+    color: #ff2a3a;
     animation: shake 0.4s steps(2) infinite;
   }
 }
@@ -440,8 +435,40 @@ $edge: #000;
 }
 
 .icon {
+  position: relative;
   font-size: 24px;
   line-height: 52px;
+}
+
+.slotBg {
+  position: absolute;
+  inset: 2px;
+  font-family: inherit;
+  font-size: 8px;
+  line-height: 12px;
+  letter-spacing: 0;
+  white-space: pre;
+  color: #fff;
+  opacity: 0.12;
+  pointer-events: none;
+  mask-image: radial-gradient(circle at center, #000 20%, transparent 80%);
+  transition: opacity 0.3s;
+
+  .active & {
+    opacity: 0.35;
+    color: #ffd666;
+  }
+}
+
+.glitchIcon {
+  display: inline-block;
+  vertical-align: middle;
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 0;
+  white-space: pre;
+  color: #ffd666;
 }
 
 .key,
@@ -488,12 +515,10 @@ $edge: #000;
   text-shadow: 1px 1px 0 #000;
 }
 
-// scattered pixel blood, each splat pops in with stepped scale
 .blood2 {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  overflow: hidden;
 
   > div {
     position: absolute;
@@ -506,7 +531,6 @@ $edge: #000;
     animation: splat 0.45s steps(4) forwards;
   }
 
-  // slow drip: a streak that creeps down from the splat
   b {
     position: absolute;
     top: 0;
@@ -635,14 +659,12 @@ $edge: #000;
   }
 }
 
-// red symbols crawl in from the screen edges, centre stays clear
 .redAscii {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
   font-family: inherit;
   font-size: 12px;
   line-height: 16px;

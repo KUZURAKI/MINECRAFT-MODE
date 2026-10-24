@@ -7,7 +7,6 @@ import Blood from "./Blood";
 import { AsciiBg } from "../Ascii";
 
 const MAX = 20;
-// walks a displayed value toward its target one point at a time (heal and damage both animate)
 const useStep = (target: number, ms = 110) => {
   const [v, setV] = useState(target);
   useEffect(() => {
@@ -18,7 +17,6 @@ const useStep = (target: number, ms = 110) => {
   return v;
 };
 
-// bleed stage 1..3 -> ms between 1-point losses
 const BLEED_MS = [0, 4000, 2000, 800];
 
 const clamp = (n: number) => Math.min(Math.max(n, 0), MAX);
@@ -33,6 +31,7 @@ const Hud = () => {
   const [xp, setXp] = useState(20);
   const [lvlUp, setLvlUp] = useState(0);
   const [bleed, setBleed] = useState(0);
+  const [debt, setDebt] = useState(0);
   const [diving, setDiving] = useState(false);
   const [air, setAir] = useState(MAX);
   const [fx, setFx] = useState<{
@@ -91,8 +90,6 @@ const Hud = () => {
     return () => clearInterval(t);
   }, [bleed]);
 
-  // underwater: air drains 1 point per 0.7s, at 0 you drown (-2 hp per tick);
-  // surfaced: air refills fast, the bar slides away once full
   useEffect(() => {
     if (!diving && air >= MAX) return;
     const t = setInterval(
@@ -101,6 +98,7 @@ const Hud = () => {
           if (air > 0) setAir((a) => a - 1);
           else {
             setHp((v) => clamp(v - 2));
+            setDebt((d) => Math.min(d + 2, MAX));
             flash("hit");
           }
         } else setAir((a) => Math.min(a + 2, MAX));
@@ -110,7 +108,6 @@ const Hud = () => {
     return () => clearInterval(t);
   }, [diving, air]);
 
-  // food and water slowly drop; at 0 each one hurts in its own way
   useEffect(() => {
     const f = setInterval(() => setFood((v) => clamp(v - 1)), 15000);
     const w = setInterval(() => setWater((v) => clamp(v - 1)), 10000);
@@ -124,6 +121,7 @@ const Hud = () => {
     if (food > 0) return;
     const t = setInterval(() => {
       setHp((v) => clamp(v - 1));
+      setDebt((d) => Math.min(d + 1, MAX));
       flash("hunger");
     }, 3000);
     return () => clearInterval(t);
@@ -133,10 +131,21 @@ const Hud = () => {
     if (water > 0) return;
     const t = setInterval(() => {
       setHp((v) => clamp(v - 1));
+      setDebt((d) => Math.min(d + 1, MAX));
       flash("thirst");
     }, 2000);
     return () => clearInterval(t);
   }, [water <= 0]);
+
+  useEffect(() => {
+    if (debt <= 0 || food <= 0 || water <= 0 || air <= 0 || bleed) return;
+    const t = setInterval(() => {
+      setHp((v) => clamp(v + 1));
+      setDebt((d) => d - 1);
+      flash("heal");
+    }, 2500);
+    return () => clearInterval(t);
+  }, [debt > 0, food <= 0, water <= 0, air <= 0, bleed]);
 
   const use = () => {
     reveal();
@@ -191,7 +200,6 @@ const Hud = () => {
           <div
             className={`${style.vignette} ${hp <= 3 ? style.critical : ""}`}
           />
-          {/* shortcut: grid sized once from the window, no resize handling; add a resize listener if the HUD must survive window changes */}
           <AsciiBg
             className={`${style.redAscii} ${hp <= 3 ? style.critical : ""}`}
             cols={Math.ceil(window.innerWidth / 12)}
