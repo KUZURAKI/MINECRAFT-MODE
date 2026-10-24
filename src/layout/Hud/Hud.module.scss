@@ -1,52 +1,73 @@
+@use "../../acrylic" as *;
+
 $edge: #000;
-$ease: cubic-bezier(0.3, 1.6, 0.5, 1);
 
 .hud {
   position: fixed;
-  top: 24px;
-  left: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 34px;
+  top: 20px;
+  left: 20px;
   user-select: none;
 }
 
 .vitals {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 34px;
 }
 
-.bar {
+.row {
+  margin-bottom: 8px;
   --c: #ff4d4d;
   --c-dark: #4a0d12;
-  --glow: rgba(255, 77, 77, 0.55);
-  display: flex;
+  --glow: rgba(255, 77, 77, 0.5);
   position: relative;
+  display: flex;
   align-items: center;
   gap: 8px;
-  padding-left: 40px;
-  --rot: -14deg;
+  padding-left: 44px;
+  min-height: 22px;
 
   &.food {
     --c: #ffb23e;
     --c-dark: #4a2c08;
-    --glow: rgba(255, 178, 62, 0.5);
-    --rot: 12deg;
+    --glow: rgba(255, 178, 62, 0.45);
+  }
+
+  &.water {
+    --c: #4db8ff;
+    --c-dark: #0b2f4a;
+    --glow: rgba(77, 184, 255, 0.45);
+  }
+
+  &.hp {
+    min-height: 40px;
+  }
+
+  &.xp {
+    --c: #7dff7a;
+    --c-dark: #0f3a12;
+    --glow: rgba(125, 255, 122, 0.45);
+    margin-bottom: 6px;
+  }
+
+  &.need {
+    padding-left: 28px;
+    margin-bottom: 0;
   }
 }
 
 .badge {
   position: absolute;
-  left: 0;
+  left: -2px;
   top: 50%;
-  width: 54px;
-  height: 54px;
-  margin-top: -27px;
-  rotate: var(--rot);
+  width: 50px;
+  height: 50px;
+  margin-top: -25px;
+  rotate: -12deg;
   z-index: 1;
   pointer-events: none;
-  filter: drop-shadow(0 0 6px var(--glow)) drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 0 6px var(--glow))
+    drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.6));
 
   img {
     display: block;
@@ -61,11 +82,37 @@ $ease: cubic-bezier(0.3, 1.6, 0.5, 1);
   animation: beat 0.7s ease-in-out infinite;
 }
 
+.mini {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 24px;
+  height: 24px;
+  margin-top: -12px;
+  rotate: 10deg;
+  filter: drop-shadow(0 0 5px var(--glow))
+    drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.6));
+
+  .water & {
+    rotate: -8deg;
+    padding: 2px 4px;
+  }
+
+  img,
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+  }
+}
+
 .cells {
   display: flex;
   gap: 4px;
   transform: skewX(-20deg);
-  filter: drop-shadow(0 0 6px var(--glow));
+  filter: drop-shadow(0 0 5px var(--glow));
 }
 
 .cell {
@@ -75,6 +122,59 @@ $ease: cubic-bezier(0.3, 1.6, 0.5, 1);
   background: var(--c-dark);
   outline: 2px solid $edge;
   overflow: hidden;
+
+  .small & {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+.small {
+  gap: 2px;
+}
+
+.needs {
+  display: flex;
+  gap: 14px;
+  padding-left: 16px;
+}
+
+.xpbar {
+  position: relative;
+  width: 206px;
+  height: 6px;
+  background: var(--c-dark);
+  outline: 2px solid $edge;
+  transform: skewX(-20deg);
+  overflow: hidden;
+  filter: drop-shadow(0 0 4px var(--glow));
+}
+
+.lvl {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  width: 36px;
+  margin-top: -13px;
+  rotate: 6deg;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--c);
+  text-shadow:
+    2px 2px 0 #000,
+    0 0 8px var(--glow);
+
+  small {
+    display: block;
+    font-size: 6px;
+    margin-bottom: 3px;
+    opacity: 0.75;
+  }
+
+  &.up {
+    animation: lvlUp 0.9s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
 }
 
 .fill,
@@ -84,7 +184,11 @@ $ease: cubic-bezier(0.3, 1.6, 0.5, 1);
 }
 
 .fill {
-  background: linear-gradient(var(--c), var(--c) 55%, color-mix(in srgb, var(--c) 60%, #000));
+  background: linear-gradient(
+    var(--c),
+    var(--c) 55%,
+    color-mix(in srgb, var(--c) 60%, #000)
+  );
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.45);
   transition: width 0.15s steps(3);
 }
@@ -96,80 +200,170 @@ $ease: cubic-bezier(0.3, 1.6, 0.5, 1);
 
 .num {
   font-size: 9px;
-  opacity: 0.8;
+  opacity: 0.85;
   text-shadow: 2px 2px 0 #000;
   min-width: 2ch;
 }
 
-.slots {
+.bleeding .fill {
+  animation: bleedPulse 0.9s ease-in-out infinite;
+}
+
+.blood {
+  position: absolute;
+  left: 38%;
+  top: 80%;
+  width: 6px;
+  height: 9px;
+  background: #c01020;
+  border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+  animation: drip 1.2s ease-in infinite;
+}
+
+.status {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.open {
+    grid-template-rows: 1fr;
+  }
+
+  > div {
+    min-height: 0;
+    overflow: hidden;
+    padding: 2px 2px 8px 46px;
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  font-size: 7px;
+  padding: 4px 8px;
+  text-shadow: 1px 1px 0 #000;
+  box-shadow:
+    0 0 0 2px $edge,
+    inset 1px 1px 0 rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.bleed {
+  background: rgba(150, 10, 25, 0.65);
+
+  i {
+    width: 6px;
+    height: 6px;
+    background: #ff4d4d;
+    animation: blink 0.8s steps(2) infinite;
+  }
+}
+
+.wrap {
+  background: rgba(40, 120, 70, 0.65);
+}
+
+.wrapBar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  background: #fff;
+  animation: wrapBar 1.6s linear forwards;
+}
+
+.fx {
+  position: absolute;
+  inset: -24px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+
+  &.heal {
+    background: radial-gradient(
+      circle at 20% 35%,
+      rgba(120, 255, 160, 0.7),
+      transparent 70%
+    );
+    animation: fx 0.8s ease-out;
+  }
+
+  &.hit {
+    background: radial-gradient(
+      circle at 20% 35%,
+      rgba(255, 60, 60, 0.75),
+      transparent 70%
+    );
+    animation: fx 0.5s ease-out;
+  }
+}
+
+.hotbar {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  translate: -50% 0;
   display: flex;
-  padding-left: 4px;
+  gap: 8px;
+  transition:
+    transform 0.6s cubic-bezier(0.5, 0, 0.2, 1),
+    opacity 0.6s;
+
+  &.hidden {
+    transform: translateY(calc(100% + 60px));
+    opacity: 0;
+  }
 }
 
 .slot {
-  position: relative;
-  width: 58px;
-  height: 78px;
+  @include acrylic(rgba(18, 22, 32, 0.45));
+  width: 52px;
+  height: 52px;
   border: 0;
-  background: none;
   color: inherit;
   font: inherit;
   cursor: pointer;
-  margin-right: -6px;
+  filter: grayscale(1) brightness(0.8);
+  opacity: 0.7;
+  transition:
+    transform 0.35s cubic-bezier(0.3, 1.4, 0.5, 1),
+    filter 0.3s,
+    opacity 0.3s;
 
-  &:nth-child(even) {
-    margin-top: 22px;
+  &:hover {
+    opacity: 1;
+  }
+
+  &.empty {
+    opacity: 0.3;
+  }
+
+  &.active {
+    filter: none;
+    opacity: 1;
+    transform: translateY(-12px);
   }
 }
 
-.gem {
+.dot {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 42px;
-  height: 42px;
-  transform: rotate(45deg) scale(0.88);
-  background: rgba(10, 8, 20, 0.62);
-  border: 3px solid $edge;
+  left: 50%;
+  bottom: -14px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  background: #fff;
   box-shadow:
-    inset 0 0 0 2px rgba(255, 255, 255, 0.18),
-    0 4px 0 rgba(0, 0, 0, 0.5);
-  display: grid;
-  place-items: center;
-  opacity: 0.75;
-  transition:
-    transform 0.25s $ease,
-    opacity 0.2s,
-    box-shadow 0.2s;
+    0 0 0 2px $edge,
+    0 0 10px rgba(255, 255, 255, 0.8);
+  animation: dot 0.3s ease-out;
 }
 
 .icon {
-  display: block;
-  transform: rotate(-45deg);
-  font-size: 20px;
-  line-height: 1;
-}
-
-.slot:hover .gem {
-  opacity: 1;
-}
-
-.active .gem {
-  opacity: 1;
-  transform: rotate(45deg) scale(1.2);
-  background: linear-gradient(135deg, rgba(255, 214, 102, 0.35), rgba(10, 8, 20, 0.7));
-  box-shadow:
-    inset 0 0 0 2px #ffd666,
-    0 0 0 2px $edge,
-    0 0 20px rgba(255, 214, 102, 0.65);
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: -3px;
-    border: 2px solid #ffd666;
-    animation: ring 1.6s ease-out infinite;
-  }
+  font-size: 24px;
+  line-height: 52px;
 }
 
 .key,
@@ -180,31 +374,40 @@ $ease: cubic-bezier(0.3, 1.6, 0.5, 1);
 }
 
 .key {
-  top: 0;
-  left: 50%;
-  translate: -50% 0;
-  opacity: 0.5;
+  top: 4px;
+  left: 5px;
+  opacity: 0.55;
 }
 
 .count {
-  right: -2px;
-  bottom: 22px;
+  right: 4px;
+  bottom: 5px;
+  font-size: 8px;
 }
 
 .dur {
   position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 14px;
-  height: 4px;
+  left: 6px;
+  right: 6px;
+  bottom: 4px;
+  height: 3px;
   background: $edge;
-  outline: 1px solid $edge;
 
   span {
     display: block;
     height: 100%;
     background: hsl(calc(var(--d) * 120), 85%, 55%);
   }
+}
+
+.hint {
+  position: fixed;
+  right: 12px;
+  bottom: 8px;
+  font-size: 7px;
+  opacity: 0.45;
+  letter-spacing: 0;
+  text-shadow: 1px 1px 0 #000;
 }
 
 .vignette {
@@ -216,17 +419,80 @@ $ease: cubic-bezier(0.3, 1.6, 0.5, 1);
 }
 
 @keyframes beat {
-  0%, 100% { transform: scale(1); }
-  15% { transform: scale(1.2); }
-  30% { transform: scale(1); }
-  45% { transform: scale(1.12); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(1.2);
+  }
+  30% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.12);
+  }
 }
 
-@keyframes ring {
-  from { opacity: 0.9; transform: scale(1); }
-  to { opacity: 0; transform: scale(1.7); }
+@keyframes lvlUp {
+  0% { transform: scale(1.9); filter: brightness(2.2); }
+  100% { transform: scale(1); filter: none; }
+}
+
+@keyframes dot {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
 }
 
 @keyframes pulse {
-  50% { opacity: 0.45; }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes drip {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(2px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.8);
+  }
+}
+
+@keyframes bleedPulse {
+  50% {
+    filter: brightness(0.6) saturate(1.4);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes wrapBar {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes fx {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

@@ -1,6 +1,15 @@
 .header {
   position: fixed;
+  top: 0;
   width: 100%;
+  pointer-events: none;
+}
+
+.toast {
+  --accent: #fff;
+  position: relative;
+  opacity: 0;
+  animation: toast 5.4s ease-in-out forwards;
 
   &::before {
     content: "";
@@ -15,23 +24,66 @@
     z-index: -1;
   }
 
-  animation: headerAnimation 2s ease-in-out forwards;
-
-  @keyframes headerAnimation {
-    0% {
-      opacity: 0;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  }
-
   .container {
+    position: relative;
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 15px;
     margin-top: 50px;
+  }
+
+  h2 {
+    font-size: 2rem;
+    letter-spacing: 3px;
+    text-shadow:
+      3px 3px 0 #000,
+      0 0 22px var(--accent);
+  }
+
+  p {
+    font-size: 9px;
+    line-height: 1.9;
+    letter-spacing: 0;
+    max-width: 560px;
+    margin: 0 auto;
+    color: var(--accent);
+    text-shadow: 1px 1px 0 #000;
+  }
+}
+
+.bg {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  translate: -50% 0;
+  font-family: inherit;
+  font-size: 8px;
+  line-height: 14px;
+  letter-spacing: 0;
+  white-space: pre;
+  color: var(--accent);
+  opacity: 0.28;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at center, #000 15%, transparent 68%);
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes toast {
+  0% {
+    opacity: 0;
+  }
+  6%,
+  84% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  50% {
+    opacity: 0.12;
   }
 }

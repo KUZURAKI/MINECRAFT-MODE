@@ -1,9 +1,17 @@
-type Slot = { icon: string; name: string; count?: number; durability?: number };
+export type Slot = {
+  icon: string;
+  name: string;
+  kind: "tool" | "pills" | "bandage" | "food" | "water";
+  count?: number;
+  durability?: number;
+};
 
 export const slots: Slot[] = [
-  { icon: "⚔️", name: "Алмазный меч", durability: 0.72 },
-  { icon: "⛏️", name: "Железная кирка", durability: 0.35 },
-  { icon: "🍖", name: "Жареная свинина", count: 12 },
-  { icon: "🔥", name: "Факел", count: 48 },
-  { icon: "🧪", name: "Зелье скорости", count: 3 },
+  { icon: "⚔️", name: "Алмазный меч", kind: "tool", durability: 0.72 },
+  { icon: "⛏️", name: "Железная кирка", kind: "tool", durability: 0.35 },
+  { icon: "💊", name: "Таблетки", kind: "pills", count: 4 },
+  { icon: "🩹", name: "Бинт", kind: "bandage", count: 3 },
+  { icon: "🍖", name: "Жареная свинина", kind: "food", count: 12 },
+  { icon: "🧃", name: "Вода", kind: "water", count: 5 },
+  { icon: "🔥", name: "Факел", kind: "tool", count: 48 },
 ];
