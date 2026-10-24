@@ -98,7 +98,7 @@ $edge: #000;
   filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.6));
 
   .water & {
-    rotate: 12deg;
+    rotate: 26deg;
   }
 
   img,
@@ -225,16 +225,16 @@ $edge: #000;
   animation-duration: 0.4s;
 }
 
-.rowFlash {
-  position: absolute;
-  top: -2px;
-  bottom: -2px;
-  left: 20px;
-  right: -2px;
-  background: var(--c);
-  pointer-events: none;
-  transform: skewX(-20deg);
-  animation: fx 0.6s ease-out;
+.hurt .cell {
+  animation: hurtCell 0.7s ease-out;
+}
+
+.hurt .fill {
+  animation: hurtFill 0.7s ease-out;
+}
+
+.need.low .mini {
+  animation: iconShake 0.3s steps(1) infinite;
 }
 
 .bleeding .fill {
@@ -318,16 +318,26 @@ $edge: #000;
     1px 1px 0 #000,
     0 0 8px rgba(255, 40, 40, 0.6);
 
+  .ico {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    margin: -6px 0;
+  }
+
   img {
-    width: 30px;
-    height: 30px;
-    margin: -8px 0;
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     image-rendering: pixelated;
   }
 
   b {
-    font-size: 14px;
+    position: absolute;
+    right: -4px;
+    bottom: -2px;
+    font-size: 13px;
     color: #fff;
     text-shadow:
       2px 2px 0 #000,
@@ -663,5 +673,34 @@ $edge: #000;
 @keyframes lowEdge {
   50% {
     outline-color: var(--c);
+  }
+}
+
+@keyframes hurtCell {
+  0% {
+    outline-color: #fff;
+    background: var(--c);
+  }
+}
+
+@keyframes hurtFill {
+  0% {
+    filter: brightness(2.6);
+  }
+}
+
+@keyframes iconShake {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  25% {
+    translate: -2px 1px;
+  }
+  50% {
+    translate: 2px -1px;
+  }
+  75% {
+    translate: -1px -2px;
   }
 }

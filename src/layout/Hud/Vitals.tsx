@@ -4,8 +4,18 @@ import { AsciiBg, Scramble } from "../Ascii";
 
 type Fx = { kind: "heal" | "hit" | "hunger" | "thirst"; n: number } | null;
 
-const Cells = ({ value, small }: { value: number; small?: boolean }) => (
-  <div className={`${style.cells} ${small ? style.small : ""}`}>
+const Cells = ({
+  value,
+  small,
+  hurt,
+}: {
+  value: number;
+  small?: boolean;
+  hurt?: boolean;
+}) => (
+  <div
+    className={`${style.cells} ${small ? style.small : ""} ${hurt ? style.hurt : ""}`}
+  >
     {Array.from({ length: 10 }, (_, i) => {
       const pts = Math.min(Math.max(Math.floor(value) - i * 2, 0), 2);
       return (
@@ -96,11 +106,13 @@ const Vitals = ({
         <div>
           <div className={style.pad}>
             <span className={`${style.chip} ${style[`s${stage}`]}`}>
-              <img src={"/blod-" + stage + ".png"} alt="" />
+              <span className={style.ico}>
+                <img src={"/blod-" + stage + ".png"} alt="" />
+                <b>
+                  <Scramble key={bleed} text={String(stage)} rate={0.4} />
+                </b>
+              </span>
               <Scramble key={bleed} text="КРОВОТЕЧЕНИЕ" rate={0.6} />
-              <b>
-                <Scramble key={bleed} text={String(stage)} rate={0.4} />
-              </b>
             </span>
           </div>
         </div>
@@ -113,8 +125,12 @@ const Vitals = ({
           <div className={style.mini}>
             <img src="/eat.png" alt="" />
           </div>
-          <Cells value={food} small />
-          {fx?.kind === "hunger" && <i key={fx.n} className={style.rowFlash} />}
+          <Cells
+            key={fx?.kind === "hunger" ? fx.n : "c"}
+            value={food}
+            small
+            hurt={fx?.kind === "hunger"}
+          />
         </div>
         <div
           className={`${style.row} ${style.need} ${style.water} ${water <= 4 ? style.low : ""}`}
@@ -122,8 +138,12 @@ const Vitals = ({
           <div className={style.mini}>
             <img src="/vater.png" alt="" />
           </div>
-          <Cells value={water} small />
-          {fx?.kind === "thirst" && <i key={fx.n} className={style.rowFlash} />}
+          <Cells
+            key={fx?.kind === "thirst" ? fx.n : "c"}
+            value={water}
+            small
+            hurt={fx?.kind === "thirst"}
+          />
         </div>
       </div>
 
