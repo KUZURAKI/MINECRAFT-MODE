@@ -1,15 +1,16 @@
+import { useRef } from "preact/hooks";
 import style from "./Hud.module.scss";
 
 type Fx = { kind: "heal" | "hit"; n: number } | null;
 
+// each cell is 2 points and snaps: empty -> half -> full (no smooth fill)
 const Cells = ({ value, small }: { value: number; small?: boolean }) => (
   <div className={`${style.cells} ${small ? style.small : ""}`}>
     {Array.from({ length: 10 }, (_, i) => {
-      const w = `${Math.min(Math.max((value - i * 2) / 2, 0), 1) * 100}%`;
+      const pts = Math.min(Math.max(Math.floor(value) - i * 2, 0), 2);
       return (
         <div key={i} className={style.cell}>
-          <div className={style.ghost} style={{ width: w }} />
-          <div className={style.fill} style={{ width: w }} />
+          <div className={style.fill} style={{ width: `${pts * 50}%` }} />
         </div>
       );
     })}
@@ -34,8 +35,7 @@ type Props = {
   xp: number;
   need: number;
   lvlUp: number;
-  bleeding: boolean;
-  bandaging: boolean;
+  bleed: number;
   fx: Fx;
 };
 
@@ -47,77 +47,91 @@ const Vitals = ({
   xp,
   need,
   lvlUp,
-  bleeding,
-  bandaging,
+  bleed,
   fx,
-}: Props) => (
-  <div className={style.vitals}>
-    {fx && <div key={fx.n} className={`${style.fx} ${style[fx.kind]}`} />}
+}: Props) => {
+  const bleeding = bleed > 0;
+  // keep the last stage so the chip doesn't change text while it collapses
+  const last = useRef(1);
+  if (bleed) last.current = bleed;
+  const stage = last.current;
 
-    <div
-      className={`${style.row} ${style.hp} ${hp <= 6 ? style.low : ""} ${bleeding ? style.bleeding : ""}`}
-    >
-      <div className={style.badge}>
-        <img src="/1.png" alt="" />
-        {bleeding && (
-          <>
-            <i className={style.blood} />
-            <i
-              className={style.blood}
-              style={{ animationDelay: "0.6s", left: "62%" }}
-            />
-          </>
-        )}
-      </div>
-      <Cells value={hp} />
-      <span className={style.num}>{Math.ceil(hp)}</span>
-    </div>
+  return (
+    <div className={style.vitals}>
+      {fx && <div key={fx.n} className={`${style.fx} ${style[fx.kind]}`} />}
 
-    <div className={`${style.row} ${style.xp}`}>
-      <div key={lvlUp} className={`${style.lvl} ${lvlUp ? style.up : ""}`}>
-        <small>LV</small>
-        {lvl}
-      </div>
-      <div className={style.xpbar}>
-        <div className={style.ghost} style={{ width: `${(xp / need) * 100}%` }} />
-        <div className={style.fill} style={{ width: `${(xp / need) * 100}%` }} />
-      </div>
-      <span className={style.num}>
-        {xp}/{need}
-      </span>
-    </div>
-
-    {/* collapses to 0 height; food + water slide up/down with it */}
-    <div className={`${style.status} ${bleeding || bandaging ? style.open : ""}`}>
-      <div>
-        {bleeding && !bandaging ? (
-          <span key="bleed" className={`${style.chip} ${style.bleed}`}>
-            <i /> КРОВОТЕЧЕНИЕ
-          </span>
-        ) : (
-          <span key="wrap" className={`${style.chip} ${style.wrap}`}>
-            ПЕРЕВЯЗКА
-            <b className={style.wrapBar} />
-          </span>
-        )}
-      </div>
-    </div>
-
-    <div className={style.needs}>
-      <div className={`${style.row} ${style.need} ${style.food}`}>
-        <div className={style.mini}>
-          <img src="/2.png" alt="" />
+      <div className={`${style.row} ${style.xp}`}>
+        <div key={lvlUp} className={`${style.lvl} ${lvlUp ? style.up : ""}`}>
+          <small>LV</small>
+          {lvl}
         </div>
-        <Cells value={food} small />
-      </div>
-      <div className={`${style.row} ${style.need} ${style.water}`}>
-        <div className={style.mini}>
-          <Drop />
+        <div className={style.xpbar}>
+          <div
+            className={style.fill}
+            style={{ width: `${(xp / need) * 100}%` }}
+          />
         </div>
-        <Cells value={water} small />
+        <span className={style.num}>
+          {xp}/{need}
+        </span>
+      </div>
+
+      <div
+        className={`${style.row} ${style.hp} ${hp <= 6 ? style.low : ""} ${hp <= 3 ? style.critical : ""} ${bleeding ? style.bleeding : ""}`}
+      >
+        <div className={style.badge}>
+          <img src="/1.png" alt="" />
+          {bleeding &&
+            Array.from({ length: bleed }, (_, i) => (
+              <i
+                key={i}
+                className={style.blood}
+                style={{
+                  left: `${34 + i * 16}%`,
+                  animationDelay: `${i * 0.25}s`,
+                  animationDuration: `${[0, 2, 1.2, 0.7][bleed]}s`,
+                }}
+              />
+            ))}
+        </div>
+        <Cells value={hp} />
+        <span className={style.num}>{Math.ceil(hp)}</span>
+      </div>
+
+      {/* collapses to 0 height; food + water slide up/down with it */}
+      <div className={`${style.status} ${bleeding ? style.open : ""}`}>
+        <div>
+          <div className={style.pad}>
+            <span
+              className={`${style.chip} ${style.bleed} ${style[`s${stage}`]}`}
+            >
+              КРОВОТЕЧЕНИЕ
+              <em>
+                {[1, 2, 3].map((n) => (
+                  <i key={n} className={n <= stage ? style.on : ""} />
+                ))}
+              </em>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className={style.needs}>
+        <div className={`${style.row} ${style.need} ${style.food}`}>
+          <div className={style.mini}>
+            <img src="/2.png" alt="" />
+          </div>
+          <Cells value={food} small />
+        </div>
+        <div className={`${style.row} ${style.need} ${style.water}`}>
+          <div className={style.mini}>
+            <Drop />
+          </div>
+          <Cells value={water} small />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default Vitals;

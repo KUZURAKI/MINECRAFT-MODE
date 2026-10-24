@@ -82,6 +82,11 @@ $edge: #000;
   animation: beat 0.7s ease-in-out infinite;
 }
 
+// 3 points or less: frantic heartbeat
+.critical .badge {
+  animation-duration: 0.36s;
+}
+
 .mini {
   position: absolute;
   left: 0;
@@ -150,6 +155,10 @@ $edge: #000;
   filter: drop-shadow(0 0 4px var(--glow));
 }
 
+.xpbar .fill {
+  transition: width 0.4s ease-out;
+}
+
 .lvl {
   position: absolute;
   left: 6px;
@@ -177,25 +186,15 @@ $edge: #000;
   }
 }
 
-.fill,
-.ghost {
+.fill {
   position: absolute;
   inset: 0 auto 0 0;
-}
-
-.fill {
   background: linear-gradient(
     var(--c),
     var(--c) 55%,
     color-mix(in srgb, var(--c) 60%, #000)
   );
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.45);
-  transition: width 0.15s steps(3);
-}
-
-.ghost {
-  background: #fff;
-  transition: width 0.7s ease-in 0.45s;
 }
 
 .num {
@@ -232,6 +231,10 @@ $edge: #000;
   > div {
     min-height: 0;
     overflow: hidden;
+  }
+
+  // padding lives inside the clipped box so nothing is left when closed
+  .pad {
     padding: 2px 2px 8px 46px;
   }
 }
@@ -253,25 +256,34 @@ $edge: #000;
 .bleed {
   background: rgba(150, 10, 25, 0.65);
 
-  i {
-    width: 6px;
-    height: 6px;
-    background: #ff4d4d;
-    animation: blink 0.8s steps(2) infinite;
+  // three pips = stage; the more filled, the darker and faster it gets
+  em {
+    display: flex;
+    gap: 3px;
+
+    i {
+      width: 6px;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.55);
+
+      &.on {
+        background: #ff4d4d;
+      }
+    }
   }
-}
 
-.wrap {
-  background: rgba(40, 120, 70, 0.65);
-}
+  &.s1 {
+    background: rgba(140, 40, 40, 0.6);
+  }
 
-.wrapBar {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 3px;
-  background: #fff;
-  animation: wrapBar 1.6s linear forwards;
+  &.s2 {
+    background: rgba(170, 20, 30, 0.75);
+  }
+
+  &.s3 {
+    background: rgba(200, 0, 20, 0.9);
+    animation: shake 0.4s steps(2) infinite;
+  }
 }
 
 .fx {
@@ -410,12 +422,62 @@ $edge: #000;
   text-shadow: 1px 1px 0 #000;
 }
 
+// scattered pixel blood, each splat pops in with stepped scale
+.blood2 {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+
+  > div {
+    position: absolute;
+  }
+
+  i {
+    display: block;
+    background: #a50e1a;
+    opacity: 0;
+    animation: splat 0.45s steps(4) forwards;
+  }
+
+  // slow drip: a streak that creeps down from the splat
+  b {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    background: linear-gradient(#8a0b16, #a50e1a 85%, #5a050c);
+    animation: streak var(--t) cubic-bezier(0.25, 0.1, 0.35, 1) var(--d) forwards;
+  }
+}
+
 .vignette {
   position: fixed;
   inset: 0;
   pointer-events: none;
   box-shadow: inset 0 0 160px 30px rgba(200, 0, 20, 0.55);
   animation: pulse 1.4s ease-in-out infinite;
+}
+
+.vignette.critical {
+  box-shadow:
+    inset 0 0 200px 70px rgba(210, 0, 20, 0.85),
+    inset 0 0 40px 10px rgba(120, 0, 10, 0.6);
+  animation-duration: 0.7s;
+}
+
+@keyframes shake {
+  50% { translate: 1px 0; }
+}
+
+@keyframes streak {
+  from { height: 0; }
+  to { height: var(--len); }
+}
+
+@keyframes splat {
+  0% { opacity: 0; transform: scale(2); }
+  100% { opacity: 0.85; transform: scale(1); }
 }
 
 @keyframes beat {
@@ -476,15 +538,6 @@ $edge: #000;
 @keyframes blink {
   50% {
     opacity: 0.2;
-  }
-}
-
-@keyframes wrapBar {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
   }
 }
 

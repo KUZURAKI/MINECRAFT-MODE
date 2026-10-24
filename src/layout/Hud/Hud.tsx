@@ -3,8 +3,23 @@ import style from "./Hud.module.scss";
 import { slots } from "./Hud.tupe";
 import Vitals from "./Vitals";
 import Hotbar from "./Hotbar";
+import Blood from "./Blood";
 
 const MAX = 20;
+// walks a displayed value toward its target one point at a time (heal and damage both animate)
+const useStep = (target: number, ms = 110) => {
+  const [v, setV] = useState(target);
+  useEffect(() => {
+    if (v === target) return;
+    const t = setTimeout(() => setV((x) => x + Math.sign(target - x)), ms);
+    return () => clearTimeout(t);
+  }, [v, target]);
+  return v;
+};
+
+// bleed stage 1..3 -> ms between 1-point losses
+const BLEED_MS = [0, 4000, 2000, 800];
+
 const clamp = (n: number) => Math.min(Math.max(n, 0), MAX);
 
 const Hud = () => {
@@ -16,8 +31,7 @@ const Hud = () => {
   const [lvl, setLvl] = useState(3);
   const [xp, setXp] = useState(20);
   const [lvlUp, setLvlUp] = useState(0);
-  const [bleeding, setBleeding] = useState(false);
-  const [bandaging, setBandaging] = useState(false);
+  const [bleed, setBleed] = useState(0);
   const [fx, setFx] = useState<{ kind: "heal" | "hit"; n: number } | null>(
     null,
   );
@@ -38,6 +52,10 @@ const Hud = () => {
     reveal();
     return () => clearTimeout(hideTimer.current);
   }, []);
+
+  const shownHp = useStep(hp);
+  const shownFood = useStep(food);
+  const shownWater = useStep(water);
 
   const need = 40 + lvl * 20;
 
@@ -63,10 +81,10 @@ const Hud = () => {
   };
 
   useEffect(() => {
-    if (!bleeding) return;
-    const t = setInterval(() => setHp((v) => clamp(v - 0.5)), 1000);
+    if (!bleed) return;
+    const t = setInterval(() => setHp((v) => clamp(v - 1)), BLEED_MS[bleed]);
     return () => clearInterval(t);
-  }, [bleeding]);
+  }, [bleed]);
 
   const use = () => {
     reveal();
@@ -81,14 +99,10 @@ const Hud = () => {
       spend();
       setHp((v) => clamp(v + 6));
       flash("heal");
-    } else if (s.kind === "bandage" && bleeding && !bandaging) {
+    } else if (s.kind === "bandage" && bleed) {
       spend();
-      setBandaging(true);
-      setTimeout(() => {
-        setBandaging(false);
-        setBleeding(false);
-        flash("heal");
-      }, 1600);
+      setBleed(0);
+      flash("heal");
     } else if (s.kind === "food" && food < MAX) {
       spend();
       setFood((v) => clamp(v + 6));
@@ -104,7 +118,7 @@ const Hud = () => {
       if (n >= 1 && n <= items.length) return select(n - 1);
       const k = e.key.toLowerCase();
       if (k === "f") use();
-      if (k === "k") setBleeding((b) => !b);
+      if (k === "k") setBleed((b) => (b + 1) % 4);
       if (k === "x") gainXp(25);
       if (e.key === "ArrowDown") {
         setHp((v) => clamp(v - 3));
@@ -117,18 +131,20 @@ const Hud = () => {
 
   return (
     <>
-      {hp <= 6 && <div className={style.vignette} />}
+      {hp <= 6 && (
+        <div className={`${style.vignette} ${hp <= 3 ? style.critical : ""}`} />
+      )}
+      {hp <= 6 && <Blood count={hp <= 3 ? 14 : 5} />}
       <aside className={style.hud}>
         <Vitals
-          hp={hp}
-          food={food}
-          water={water}
+          hp={shownHp}
+          food={shownFood}
+          water={shownWater}
           lvl={lvl}
           xp={xp}
           need={need}
           lvlUp={lvlUp}
-          bleeding={bleeding}
-          bandaging={bandaging}
+          bleed={bleed}
           fx={fx}
         />
       </aside>
