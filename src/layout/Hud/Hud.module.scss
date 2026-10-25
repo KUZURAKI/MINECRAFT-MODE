@@ -704,3 +704,63 @@ $edge: #000;
     translate: -1px -2px;
   }
 }
+
+.hp {
+  --base: 0.6s;
+}
+
+.food {
+  --base: 1.1s;
+}
+
+.water {
+  --base: 1.4s;
+}
+
+.intro {
+  .badge,
+  .mini {
+    animation: iconIn 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) backwards;
+    animation-delay: calc(var(--base, 0s) - 0.5s);
+  }
+
+  .cell {
+    animation: cellIn 0.35s ease-out backwards;
+    animation-delay: calc(var(--base, 0s) + var(--i, 0) * 70ms);
+  }
+
+  .hudBg {
+    animation: introFade 1.4s ease-out backwards;
+  }
+}
+
+.hotbar {
+  animation: barIn 0.7s ease-out 0.2s backwards;
+}
+
+@keyframes iconIn {
+  from {
+    opacity: 0;
+    scale: 0.4;
+  }
+}
+
+@keyframes cellIn {
+  from {
+    opacity: 0;
+    translate: -8px 0;
+  }
+}
+
+@keyframes introFade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes barIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+}

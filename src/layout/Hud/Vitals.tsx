@@ -1,4 +1,4 @@
-import { useRef } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import style from "./Hud.module.scss";
 import { AsciiBg, Scramble } from "../Ascii";
 
@@ -19,7 +19,7 @@ const Cells = ({
     {Array.from({ length: 10 }, (_, i) => {
       const pts = Math.min(Math.max(Math.floor(value) - i * 2, 0), 2);
       return (
-        <div key={i} className={style.cell}>
+        <div key={i} className={style.cell} style={{ ["--i" as string]: i }}>
           <div className={style.fill} style={{ width: `${pts * 50}%` }} />
           <span className={style.glyph}>
             <Scramble
@@ -62,12 +62,17 @@ const Vitals = ({
   fx,
 }: Props) => {
   const bleeding = bleed > 0;
+  const [intro, setIntro] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setIntro(false), 3200);
+    return () => clearTimeout(t);
+  }, []);
   const last = useRef(1);
   if (bleed) last.current = bleed;
   const stage = last.current;
 
   return (
-    <div className={style.vitals}>
+    <div className={`${style.vitals} ${intro ? style.intro : ""}`}>
       <AsciiBg className={style.hudBg} cols={44} rows={13} ms={140} forever />
       {fx && <div key={fx.n} className={`${style.fx} ${style[fx.kind]}`} />}
 
