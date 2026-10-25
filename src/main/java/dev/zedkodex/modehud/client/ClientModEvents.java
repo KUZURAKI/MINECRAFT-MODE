@@ -9,6 +9,12 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.world.level.GrassColor;
+import dev.zedkodex.modehud.world.ModBlocks;
 
 @EventBusSubscriber(modid = ModeHud.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientModEvents {
@@ -20,6 +26,13 @@ public class ClientModEvents {
     @SubscribeEvent
     static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModeHud.MOTORCYCLE.get(), MotorcycleRenderer::new);
+        event.registerEntityRenderer(ModeHud.CAR.get(), VehicleRenderers.CarRenderer::new);
+        event.registerEntityRenderer(ModeHud.FIGHTER.get(), c -> new VehicleRenderers.PlaneRenderer<>(c, "fighter", 0.9f, 1.5f));
+        event.registerEntityRenderer(ModeHud.BOMBER.get(), c -> new VehicleRenderers.PlaneRenderer<>(c, "bomber", 0.8f, 2.5f));
+        event.registerEntityRenderer(ModeHud.TARANTULA.get(), VehicleRenderers.TarantulaRenderer::new);
+        event.registerEntityRenderer(ModeHud.MISSILE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(ModeHud.BOMB.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(ModeHud.WEB_SHOT.get(), ThrownItemRenderer::new);
     }
 
     @SubscribeEvent
@@ -27,12 +40,33 @@ public class ClientModEvents {
         BandageModel model = new BandageModel(event.getEntityModels().bakeLayer(BandageModel.LAYER));
         BandageModel.shared = model;
         for (PlayerSkin.Model skin : event.getSkins()) {
-            if (event.getSkin(skin) instanceof PlayerRenderer renderer) renderer.addLayer(new BandageLayer(renderer, model));
+            if (event.getSkin(skin) instanceof PlayerRenderer renderer) {
+                renderer.addLayer(new BandageLayer(renderer, model));
+                renderer.addLayer(new BackpackLayer(renderer));
+            }
         }
     }
 
     @SubscribeEvent
     static void onRegisterLayers(RegisterGuiLayersEvent event) {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "hud"), HudRenderer::render);
+    }
+
+    @SubscribeEvent
+    static void onKeys(RegisterKeyMappingsEvent event) {
+        event.register(ModKeys.OPEN_BACKPACK);
+        event.register(ModKeys.TAKE_OFF_BACKPACK);
+        event.register(ModKeys.EXIT_VEHICLE);
+    }
+
+    @SubscribeEvent
+    static void onBlockColors(RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tint) -> level != null && pos != null ? BiomeColors.getAverageGrassColor(level, pos) : GrassColor.getDefaultColor(),
+                ModBlocks.SLABS.get("grass_slab").get());
+    }
+
+    @SubscribeEvent
+    static void onItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tint) -> tint == 0 ? GrassColor.getDefaultColor() : -1, ModBlocks.SLABS.get("grass_slab").get());
     }
 }

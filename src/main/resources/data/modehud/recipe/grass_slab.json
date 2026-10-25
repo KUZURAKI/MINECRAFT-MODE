@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:grass_block"
+    }
+  },
+  "result": {
+    "id": "modehud:grass_slab",
+    "count": 6
+  }
+}

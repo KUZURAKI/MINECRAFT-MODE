@@ -43,6 +43,12 @@ public class Config {
         public final ModConfigSpec.IntValue bandageWrapTicks;
         public final ModConfigSpec.IntValue bandageHealTicks;
         public final ModConfigSpec.IntValue bandageHeal;
+        public final ModConfigSpec.DoubleValue planeGunDamage;
+        public final ModConfigSpec.DoubleValue missilePower;
+        public final ModConfigSpec.BooleanValue missileBreaksBlocks;
+        public final ModConfigSpec.DoubleValue bombPower;
+        public final ModConfigSpec.BooleanValue bombBreaksBlocks;
+        public final ModConfigSpec.IntValue tarantulaSpawnRarity;
 
         Common(ModConfigSpec.Builder b) {
             b.push("thirst");
@@ -74,6 +80,18 @@ public class Config {
             bandageWrapTicks = b.comment("Ticks of one bandage wrap, three wraps per use").defineInRange("bandageWrapTicks", 20, 5, 80);
             bandageHealTicks = b.comment("Ticks the bandage keeps healing after it is wrapped").defineInRange("bandageHealTicks", 240, 40, 2400);
             bandageHeal = b.comment("Hp restored over the bandage healing time").defineInRange("bandageHeal", 6, 1, 20);
+            b.pop();
+
+            b.push("vehicles");
+            planeGunDamage = b.comment("Damage of one fighter gun hit").defineInRange("planeGunDamage", 6.0, 0.5, 100.0);
+            missilePower = b.comment("Fighter missile explosion power").defineInRange("missilePower", 3.5, 0.5, 20.0);
+            missileBreaksBlocks = b.comment("Fighter missiles destroy blocks").define("missileBreaksBlocks", false);
+            bombPower = b.comment("Bomber bomb explosion power").defineInRange("bombPower", 5.0, 0.5, 30.0);
+            bombBreaksBlocks = b.comment("Bomber bombs destroy blocks").define("bombBreaksBlocks", true);
+            b.pop();
+
+            b.push("tarantula");
+            tarantulaSpawnRarity = b.comment("Tarantula spawn is allowed once per this many valid spawn attempts, higher is rarer").defineInRange("spawnRarity", 6, 1, 200);
             b.pop();
         }
     }

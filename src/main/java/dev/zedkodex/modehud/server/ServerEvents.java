@@ -2,7 +2,9 @@ package dev.zedkodex.modehud.server;
 
 import dev.zedkodex.modehud.Config;
 import dev.zedkodex.modehud.ModeHud;
+import dev.zedkodex.modehud.data.BackpackData;
 import dev.zedkodex.modehud.data.Vitals;
+import dev.zedkodex.modehud.net.BackpackPayload;
 import dev.zedkodex.modehud.net.BandagePayload;
 import dev.zedkodex.modehud.net.PortalPayload;
 import dev.zedkodex.modehud.net.VitalsPayload;
@@ -296,6 +298,29 @@ public class ServerEvents {
             boolean first = !v.journeyShown;
             v.journeyShown = true;
             sync(p, v, true, first);
+            Actions.syncBackpack(p);
+            for (ServerPlayer o : p.server.getPlayerList().getPlayers()) {
+                if (o != p && o.getData(ModeHud.BACKPACK).worn()) PacketDistributor.sendToPlayer(p, new BackpackPayload(o.getId(), true));
+            }
+        }
+    }
+
+    @SubscribeEvent
+    static void onTrack(PlayerEvent.StartTracking event) {
+        if (event.getTarget() instanceof ServerPlayer t && event.getEntity() instanceof ServerPlayer viewer && t.getData(ModeHud.BACKPACK).worn()) {
+            PacketDistributor.sendToPlayer(viewer, new BackpackPayload(t.getId(), true));
+        }
+    }
+
+    @SubscribeEvent
+    static void onDrops(net.neoforged.neoforge.event.entity.living.LivingDropsEvent event) {
+        if (event.getEntity() instanceof ServerPlayer p) {
+            BackpackData d = p.getData(ModeHud.BACKPACK);
+            if (!d.worn()) return;
+            ItemStack bag = d.stack;
+            d.stack = ItemStack.EMPTY;
+            event.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(p.level(), p.getX(), p.getY(), p.getZ(), bag));
+            Actions.syncBackpack(p);
         }
     }
 

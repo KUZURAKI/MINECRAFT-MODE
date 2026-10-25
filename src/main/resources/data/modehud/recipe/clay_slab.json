@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:clay"
+    }
+  },
+  "result": {
+    "id": "modehud:clay_slab",
+    "count": 6
+  }
+}

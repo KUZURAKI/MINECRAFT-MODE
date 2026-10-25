@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:gravel"
+    }
+  },
+  "result": {
+    "id": "modehud:gravel_slab",
+    "count": 6
+  }
+}

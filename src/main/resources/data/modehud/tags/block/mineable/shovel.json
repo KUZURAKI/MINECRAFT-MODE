@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "modehud:grass_slab",
+    "modehud:dirt_slab",
+    "modehud:coarse_dirt_slab",
+    "modehud:podzol_slab",
+    "modehud:mycelium_slab",
+    "modehud:sand_slab",
+    "modehud:red_sand_slab",
+    "modehud:gravel_slab",
+    "modehud:mud_slab",
+    "modehud:clay_slab"
+  ]
+}

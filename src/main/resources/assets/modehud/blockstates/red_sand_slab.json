@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "modehud:block/red_sand_slab"
+    },
+    "type=top": {
+      "model": "modehud:block/red_sand_slab_top"
+    },
+    "type=double": {
+      "model": "minecraft:block/red_sand"
+    }
+  }
+}

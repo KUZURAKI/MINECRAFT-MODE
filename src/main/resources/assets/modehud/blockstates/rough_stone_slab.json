@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "modehud:block/rough_stone_slab"
+    },
+    "type=top": {
+      "model": "modehud:block/rough_stone_slab_top"
+    },
+    "type=double": {
+      "model": "minecraft:block/stone"
+    }
+  }
+}

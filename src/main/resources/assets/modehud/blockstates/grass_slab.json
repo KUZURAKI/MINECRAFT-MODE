@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "modehud:block/grass_slab"
+    },
+    "type=top": {
+      "model": "modehud:block/grass_slab_top"
+    },
+    "type=double": {
+      "model": "minecraft:block/grass_block"
+    }
+  }
+}

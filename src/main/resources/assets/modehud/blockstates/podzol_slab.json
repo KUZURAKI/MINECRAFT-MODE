@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "modehud:block/podzol_slab"
+    },
+    "type=top": {
+      "model": "modehud:block/podzol_slab_top"
+    },
+    "type=double": {
+      "model": "minecraft:block/podzol"
+    }
+  }
+}

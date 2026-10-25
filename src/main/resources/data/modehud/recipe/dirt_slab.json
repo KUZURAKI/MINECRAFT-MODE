@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:dirt"
+    }
+  },
+  "result": {
+    "id": "modehud:dirt_slab",
+    "count": 6
+  }
+}

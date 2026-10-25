@@ -1,6 +1,6 @@
 package dev.zedkodex.modehud.client;
 
-import dev.zedkodex.modehud.entity.Motorcycle;
+import dev.zedkodex.modehud.entity.FuelVehicle;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 
@@ -8,8 +8,8 @@ public final class FuelPanel {
     private FuelPanel() {}
 
     public static void render(GuiGraphics g, long now, Player p) {
-        if (!(p.getVehicle() instanceof Motorcycle bike) || HudState.dead) return;
-        float fuel = bike.getFuel() / (float) Motorcycle.MAX_FUEL;
+        if (!(p.getVehicle() instanceof FuelVehicle bike) || HudState.dead) return;
+        float fuel = bike.fuelFraction();
         boolean on = bike.isEngineOn();
         int w = 70;
         int x = Gfx.vw - w - 14;

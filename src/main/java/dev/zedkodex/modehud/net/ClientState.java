@@ -5,6 +5,7 @@ import dev.zedkodex.modehud.data.Vitals;
 public class ClientState {
     public static final java.util.concurrent.ConcurrentLinkedQueue<Integer> portals = new java.util.concurrent.ConcurrentLinkedQueue<>();
     public static final java.util.Map<Integer, Long> bandaged = new java.util.concurrent.ConcurrentHashMap<>();
+    public static final java.util.Set<Integer> backpacks = java.util.concurrent.ConcurrentHashMap.newKeySet();
     public static float water = Vitals.MAX_WATER;
     public static int bleed;
     public static int fxKind;
@@ -27,5 +28,6 @@ public class ClientState {
         journey = false;
         portals.clear();
         bandaged.clear();
+        backpacks.clear();
     }
 }
