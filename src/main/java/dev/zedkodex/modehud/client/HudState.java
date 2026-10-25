@@ -96,6 +96,7 @@ public final class HudState {
         ToastPanel.reset();
         EyesPanel.reset();
         BloodPanel.reset();
+        WeatherPanel.reset();
     }
 
     private static void respawn(long now) {
@@ -114,6 +115,7 @@ public final class HudState {
         pendingDeath = null;
         ToastPanel.forget();
         BloodPanel.reset();
+        WeatherPanel.reset();
     }
 
     private static void start(long now) {

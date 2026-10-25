@@ -101,6 +101,7 @@ public class Config {
         public final ModConfigSpec.BooleanValue eyesIntro;
         public final ModConfigSpec.BooleanValue notifications;
         public final ModConfigSpec.BooleanValue bloodEffects;
+        public final ModConfigSpec.BooleanValue weatherEffects;
         public final ModConfigSpec.BooleanValue asciiEffects;
         public final ModConfigSpec.DoubleValue hudScale;
         public final ModConfigSpec.DoubleValue toastScale;
@@ -111,6 +112,7 @@ public class Config {
             eyesIntro = b.comment("Eye opening effect after joining a world").define("eyesIntro", true);
             notifications = b.comment("Biome and realm notifications").define("notifications", true);
             bloodEffects = b.comment("Blood splatters and red screen edges at low hp").define("bloodEffects", true);
+            weatherEffects = b.comment("Rain drops, dust and ambient particles on the screen").define("weatherEffects", true);
             asciiEffects = b.comment("Symbol effects (ascii) on text and backgrounds").define("asciiEffects", true);
             hudScale = b.comment("Size of the vitals panel and hotbar").defineInRange("hudScale", 0.6, 0.25, 3.0);
             toastScale = b.comment("Size of biome and realm notifications").defineInRange("toastScale", 0.75, 0.25, 3.0);
