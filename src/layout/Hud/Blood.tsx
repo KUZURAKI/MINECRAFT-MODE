@@ -1,10 +1,7 @@
+import { useState } from "preact/hooks";
 import style from "./Hud.module.scss";
 
-let seed = 7;
-const rnd = () => {
-  seed = (seed * 16807) % 2147483647;
-  return seed / 2147483647;
-};
+const rnd = Math.random;
 
 const REDS = ["#7a0610", "#a50e1a", "#c4182a"];
 
@@ -31,31 +28,32 @@ const makeSplat = () => {
   };
 };
 
-const splats = Array.from({ length: 14 }, makeSplat);
-
-const Blood = ({ count }: { count: number }) => (
-  <div className={style.blood2} aria-hidden="true">
-    {splats.slice(0, count).map((s, i) => (
-      <div key={i} style={{ left: `${s.x}%`, top: `${s.y}%` }}>
-        <i
-          style={{
-            width: s.u,
-            height: s.u,
-            animationDelay: `${s.delay}s`,
-            boxShadow: s.shadow,
-          }}
-        />
-        <b
-          style={{
-            width: s.u,
-            ["--len" as string]: `${s.len}px`,
-            ["--t" as string]: `${s.t}s`,
-            ["--d" as string]: `${s.delay + 0.8}s`,
-          }}
-        />
-      </div>
-    ))}
-  </div>
-);
+const Blood = ({ count }: { count: number }) => {
+  const [splats] = useState(() => Array.from({ length: 14 }, makeSplat));
+  return (
+    <div className={style.blood2} aria-hidden="true">
+      {splats.slice(0, count).map((s, i) => (
+        <div key={i} style={{ left: `${s.x}%`, top: `${s.y}%` }}>
+          <i
+            style={{
+              width: s.u,
+              height: s.u,
+              animationDelay: `${s.delay}s`,
+              boxShadow: s.shadow,
+            }}
+          />
+          <b
+            style={{
+              width: s.u,
+              ["--len" as string]: `${s.len}px`,
+              ["--t" as string]: `${s.t}s`,
+              ["--d" as string]: `${s.delay + 0.8}s`,
+            }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default Blood;
