@@ -43,10 +43,11 @@ public final class SoulFx {
             float reach = Gfx.clamp(k * 1.4f - t * 0.4f);
             if (reach <= 0f) break;
             float pulse = 0.7f + 0.3f * (float) Math.sin(time * 4f - t * 12f);
-            float a = k * pulse * (0.35f + 0.4f * t);
-            g.fill((int) x - 2, (int) y - 2, (int) x + 3, (int) y + 3, Gfx.rgba(SOUL, a * 0.12f));
-            g.fill((int) x - 1, (int) y - 1, (int) x + 2, (int) y + 2, Gfx.rgba(SOUL, a * 0.35f));
-            g.fill((int) x, (int) y, (int) x + 1, (int) y + 1, Gfx.rgba(0xFFFFFF, a * 0.8f));
+            float a = k * pulse * (0.55f + 0.45f * t);
+            int th = 2 + (int) (3 * (1f - t));
+            g.fill((int) x - th - 3, (int) y - th - 3, (int) x + th + 4, (int) y + th + 4, Gfx.rgba(0x2A0638, a * 0.1f));
+            g.fill((int) x - th - 1, (int) y - th - 1, (int) x + th + 2, (int) y + th + 2, Gfx.rgba(0x12001C, a * 0.35f));
+            g.fill((int) x - th / 2, (int) y - th / 2, (int) x + th / 2 + 1, (int) y + th / 2 + 1, Gfx.rgba(0x000000, a * 0.95f));
         }
         for (int i = 0; i < 6; i++) {
             float t = (float) ((time * 0.35 + i / 6.0) % 1.0);
@@ -55,10 +56,11 @@ public final class SoulFx {
             float x = v * v * bx + 2 * v * u * cx + u * u * sx;
             float y = v * v * by + 2 * v * u * cy + u * u * sy;
             float a = (float) Math.sin(t * Math.PI) * k;
-            g.fill((int) x - 1, (int) y - 1, (int) x + 3, (int) y + 3, Gfx.rgba(SOUL, a * 0.5f));
-            g.fill((int) x, (int) y, (int) x + 2, (int) y + 2, Gfx.rgba(0xFFFFFF, a));
+            g.fill((int) x - 2, (int) y - 2, (int) x + 4, (int) y + 4, Gfx.rgba(0x5A1478, a * 0.5f));
+            g.fill((int) x - 1, (int) y - 1, (int) x + 3, (int) y + 3, Gfx.rgba(0x000000, a));
         }
-        glow(g, bx, by, 6f * k, 0.6f * k);
+        g.fill((int) bx - 9, (int) by - 9, (int) bx + 9, (int) by + 9, Gfx.rgba(0x12001C, 0.35f * k));
+        g.fill((int) bx - 5, (int) by - 5, (int) bx + 5, (int) by + 5, Gfx.rgba(0x000000, 0.8f * k));
     }
 
     private static void motes(GuiGraphics g, long now, float bx, float by, float k) {

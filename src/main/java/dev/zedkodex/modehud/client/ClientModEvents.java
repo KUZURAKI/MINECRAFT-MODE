@@ -51,6 +51,7 @@ public class ClientModEvents {
     static void onRegisterLayers(RegisterGuiLayersEvent event) {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "weather"),
                 (g, delta) -> WeatherPanel.render(g, net.minecraft.Util.getMillis()));
+        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "curse"), GripClient::overlay);
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "hud"), HudRenderer::render);
     }
 

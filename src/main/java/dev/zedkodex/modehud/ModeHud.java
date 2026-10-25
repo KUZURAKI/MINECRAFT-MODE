@@ -168,6 +168,10 @@ public class ModeHud {
                     if (payload.worn()) ClientState.backpacks.add(payload.entityId());
                     else ClientState.backpacks.remove(payload.entityId());
                 }));
+        reg.playToServer(dev.zedkodex.modehud.net.GripPayload.TYPE, dev.zedkodex.modehud.net.GripPayload.CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> {
+                    if (ctx.player() instanceof ServerPlayer sp) dev.zedkodex.modehud.server.Grip.handle(sp, payload);
+                }));
         reg.playToServer(ActionPayload.TYPE, ActionPayload.CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
                     if (ctx.player() instanceof ServerPlayer sp) Actions.handle(sp, payload.action());

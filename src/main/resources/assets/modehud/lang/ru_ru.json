@@ -44,5 +44,7 @@
   "block.modehud.gravel_slab": "Гравийный полублок",
   "block.modehud.mud_slab": "Грязевой полублок",
   "block.modehud.rough_stone_slab": "Каменный полублок рельефа",
-  "block.modehud.clay_slab": "Глиняный полублок"
+  "block.modehud.clay_slab": "Глиняный полублок",
+  "death.attack.modehud_crush": "%1$s раздавлен проклятой волей",
+  "death.attack.modehud_crush.player": "%1$s раздавлен волей %2$s"
 }

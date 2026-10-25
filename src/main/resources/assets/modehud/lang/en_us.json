@@ -44,5 +44,7 @@
   "block.modehud.gravel_slab": "Gravel Slab",
   "block.modehud.mud_slab": "Mud Slab",
   "block.modehud.rough_stone_slab": "Stone Terrain Slab",
-  "block.modehud.clay_slab": "Clay Slab"
+  "block.modehud.clay_slab": "Clay Slab",
+  "death.attack.modehud_crush": "%1$s was crushed by a cursed will",
+  "death.attack.modehud_crush.player": "%1$s was crushed by the will of %2$s"
 }

@@ -202,7 +202,7 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
         g.pose().pushPose();
         g.pose().translate(0f, 0f, -2000f);
         SoulFx.render(g, net.minecraft.Util.getMillis(), SoulView.raw(), v, width, height,
-                width * 0.2f, height * 0.55f, pivotX, pivotY);
+                width * 0.2f, height * 0.62f, pivotX, pivotY);
         g.pose().popPose();
         rawX = mx;
         rawY = my;

@@ -1,4 +1,8 @@
 {
   "replace": false,
-  "values": ["modehud:bleed", "modehud:thirst"]
+  "values": [
+    "modehud:bleed",
+    "modehud:thirst",
+    "modehud:crush"
+  ]
 }
