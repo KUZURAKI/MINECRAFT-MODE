@@ -1,0 +1,142 @@
+.container {
+  width: 500px;
+  height: 700px;
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  transform: perspective(400px) rotateY(-15deg);
+  transform-origin: center;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  animation: animation 1s ease-in-out;
+
+  @keyframes animation {
+    0% {
+      transform: translateX(1000px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      transform: perspective(400px) rotateY(-15deg);
+      opacity: 1;
+    }
+  }
+
+  &Up {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+    .itemsLeft {
+      display: flex;
+      gap: 5px;
+      background-color: blue;
+      padding: 10px;
+      border-radius: 10px;
+
+      > div:last-child {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        
+        .block {
+          width: 50px;
+          height: 50px;
+          background-color: red;
+          border-radius: 5px;
+        }
+      }
+    }
+
+    .itemsRight {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      background-color: blue;
+      padding: 10px;
+      border-radius: 10px;
+
+      > div:nth-child(1) {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+
+        .block {
+          background-color: red;
+          width: 50px;
+          height: 50px;
+          border-radius: 5px;
+        }
+      }
+
+      > div:nth-child(2) {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        justify-content: center;
+
+        .block {
+          background-color: red;
+          width: 50px;
+          height: 50px;
+          border-radius: 5px;
+        }
+      }
+
+      > div:nth-child(3) {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        justify-content: center;
+
+        .block {
+          background-color: red;
+          width: 50px;
+          height: 50px;
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+
+  &Center {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    background-color: blue;
+    padding: 10px;
+    border-radius: 10px;
+
+    .block {
+      background-color: red;
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+    }
+  }
+
+  &Down {
+    display: flex;
+    justify-content: space-between;
+    background-color: blue;
+    padding: 10px;
+    border-radius: 10px;
+
+    .block {
+      background-color: red;
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+    }
+  }
+}
+
+.block {
+  transition: all 0.3s ease-in-out;
+}
+
+.block:hover {
+  scale: 1.1;
+}

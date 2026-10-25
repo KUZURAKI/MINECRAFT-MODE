@@ -2,6 +2,7 @@ import { useEffect, useState } from "preact/hooks";
 import Header from "./layout/Header/Header";
 import Hud from "./layout/Hud/Hud";
 import Eyes from "./layout/Eyes/Eyes";
+import Interface from "./layout/interface/Interface";
 
 export function App() {
   const [stage, setStage] = useState(0);
@@ -20,6 +21,7 @@ export function App() {
       <Eyes />
       {stage >= 1 && <Hud />}
       {stage >= 2 && <Header />}
+      {stage >= 2 && <Interface />}
     </>
   );
 }
