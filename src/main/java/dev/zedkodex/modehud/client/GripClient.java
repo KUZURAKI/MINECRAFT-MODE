@@ -61,7 +61,7 @@ public final class GripClient {
         return mc.screen == null && p.getMainHandItem().isEmpty() && !p.isSpectator() && !(p.getVehicle() instanceof Plane);
     }
 
-    private static int pick(ClientLevel lv, LocalPlayer p) {
+    static int pick(ClientLevel lv, LocalPlayer p) {
         Vec3 eye = p.getEyePosition();
         Vec3 look = p.getLookAngle();
         Vec3 end = eye.add(look.scale(RANGE));
@@ -142,7 +142,7 @@ public final class GripClient {
             event.setCanceled(true);
             return;
         }
-        if (event.isUseItem() && event.getHand() == InteractionHand.MAIN_HAND && hovered >= 0 && able(mc, p) && !mc.options.keySprint.isDown()) {
+        if (event.isUseItem() && event.getHand() == InteractionHand.MAIN_HAND && hovered >= 0 && able(mc, p)) {
             send(GripPayload.START, hovered, 0f);
             gripping = true;
             gripId = hovered;

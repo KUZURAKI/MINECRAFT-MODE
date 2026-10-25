@@ -16,6 +16,12 @@ public record ActionPayload(int action) implements CustomPacketPayload {
     public static final int CRASH = 5;
     public static final int WRAITH_ON = 6;
     public static final int WRAITH_OFF = 7;
+    public static final int VOID_TOGGLE = 8;
+    public static final int DASH = 9;
+    public static final int SHOCKWAVE = 10;
+    public static final int TENDRILS = 11;
+    public static final int DEVOUR = 12;
+    public static final int SINGULARITY = 13;
 
     public static final Type<ActionPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "action"));
 

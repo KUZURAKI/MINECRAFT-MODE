@@ -12,6 +12,7 @@ public record GripPayload(int action, int entityId, float value) implements Cust
     public static final int STOP = 1;
     public static final int DISTANCE = 2;
     public static final int CRUSH = 3;
+    public static final int ERASE = 4;
 
     public static final Type<GripPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "grip"));
 

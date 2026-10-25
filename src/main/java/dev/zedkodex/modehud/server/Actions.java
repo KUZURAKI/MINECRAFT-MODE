@@ -37,6 +37,7 @@ public final class Actions {
             }
             case ActionPayload.WRAITH_ON -> Wraith.toggle(p, true);
             case ActionPayload.WRAITH_OFF -> Wraith.toggle(p, false);
+            case ActionPayload.VOID_TOGGLE -> VoidForm.toggle(p);
             default -> {
             }
         }

@@ -3,6 +3,7 @@
   "values": [
     "modehud:bleed",
     "modehud:thirst",
-    "modehud:crush"
+    "modehud:crush",
+    "modehud:erase"
   ]
 }

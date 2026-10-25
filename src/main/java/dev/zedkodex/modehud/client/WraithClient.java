@@ -48,7 +48,6 @@ public final class WraithClient {
     }
 
     private static final Map<Integer, State> states = new HashMap<>();
-    private static boolean sent;
     private static long selfChangeMs;
     private static boolean selfOn;
 
@@ -80,6 +79,17 @@ public final class WraithClient {
         return s.on ? Gfx.smooth(t) : 1f - Gfx.smooth(t);
     }
 
+    public static void toggle() {
+        LocalPlayer p = Minecraft.getInstance().player;
+        if (p == null) return;
+        if (selfOn) PacketDistributor.sendToServer(new ActionPayload(ActionPayload.WRAITH_OFF));
+        else if (!p.isSpectator()) PacketDistributor.sendToServer(new ActionPayload(ActionPayload.WRAITH_ON));
+    }
+
+    public static boolean selfOn() {
+        return selfOn;
+    }
+
     public static boolean selfActive() {
         return selfOn || Util.getMillis() - selfChangeMs < FORM_MS;
     }
@@ -90,17 +100,8 @@ public final class WraithClient {
         LocalPlayer p = mc.player;
         if (p == null) {
             states.clear();
-            sent = false;
             selfOn = false;
             return;
-        }
-        boolean want = mc.screen == null && mc.options.keySprint.isDown() && mc.options.keyUse.isDown() && !GripClient.gripping;
-        if (sent && !want) {
-            PacketDistributor.sendToServer(new ActionPayload(ActionPayload.WRAITH_OFF));
-            sent = false;
-        } else if (!sent && want && (selfOn || !p.isSpectator())) {
-            PacketDistributor.sendToServer(new ActionPayload(ActionPayload.WRAITH_ON));
-            sent = true;
         }
         long now = Util.getMillis();
         Iterator<Map.Entry<Integer, State>> it = states.entrySet().iterator();
@@ -113,10 +114,6 @@ public final class WraithClient {
     @SubscribeEvent
     static void onInteraction(InputEvent.InteractionKeyMappingTriggered event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.options.keySprint.isDown() && event.isUseItem() && !GripClient.gripping) {
-            event.setSwingHand(false);
-            event.setCanceled(true);
-        }
         if (selfOn) {
             event.setSwingHand(false);
             event.setCanceled(true);

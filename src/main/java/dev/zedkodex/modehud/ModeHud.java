@@ -174,6 +174,14 @@ public class ModeHud {
                 }));
         reg.playToClient(dev.zedkodex.modehud.net.WraithPayload.TYPE, dev.zedkodex.modehud.net.WraithPayload.CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> dev.zedkodex.modehud.client.WraithClient.apply(payload)));
+        reg.playToClient(dev.zedkodex.modehud.net.VoidPayload.TYPE, dev.zedkodex.modehud.net.VoidPayload.CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> dev.zedkodex.modehud.client.VoidClient.apply(payload)));
+        reg.playToClient(dev.zedkodex.modehud.net.FxPayload.TYPE, dev.zedkodex.modehud.net.FxPayload.CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> dev.zedkodex.modehud.client.AbilityFx.add(payload)));
+        reg.playToServer(dev.zedkodex.modehud.net.AbilityPayload.TYPE, dev.zedkodex.modehud.net.AbilityPayload.CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> {
+                    if (ctx.player() instanceof ServerPlayer sp) dev.zedkodex.modehud.server.VoidForm.ability(sp, payload.ability(), payload.target());
+                }));
         reg.playToServer(ActionPayload.TYPE, ActionPayload.CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
                     if (ctx.player() instanceof ServerPlayer sp) Actions.handle(sp, payload.action());

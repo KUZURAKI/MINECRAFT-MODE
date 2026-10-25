@@ -32,7 +32,7 @@ public final class GripFx {
     private static final int SEGMENTS = 48;
     private static final int FULL_BRIGHT = 0xF000F0;
 
-    private static Matrix4f view = new Matrix4f();
+    static Matrix4f view = new Matrix4f();
 
     private static Vec3 hand(LocalPlayer p, float pt, boolean firstPerson) {
         Vec3 eye = p.getEyePosition(pt);
@@ -215,7 +215,7 @@ public final class GripFx {
         }
     }
 
-    private static void portal(MultiBufferSource.BufferSource bs, Vec3 cam, Vec3 c, Vec3 normal, float size, float time) {
+    static void portal(MultiBufferSource.BufferSource bs, Vec3 cam, Vec3 c, Vec3 normal, float size, float time) {
         if (size <= 0.01f) return;
         Vec3 a = normal.cross(Math.abs(normal.y) > 0.9 ? new Vec3(1, 0, 0) : new Vec3(0, 1, 0)).normalize();
         Vec3 b = normal.cross(a).normalize();

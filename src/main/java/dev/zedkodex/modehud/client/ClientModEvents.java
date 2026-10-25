@@ -43,6 +43,7 @@ public class ClientModEvents {
             if (event.getSkin(skin) instanceof PlayerRenderer renderer) {
                 renderer.addLayer(new BandageLayer(renderer, model));
                 renderer.addLayer(new BackpackLayer(renderer));
+                renderer.addLayer(new VoidLayer(renderer));
             }
         }
     }
@@ -53,6 +54,7 @@ public class ClientModEvents {
                 (g, delta) -> WeatherPanel.render(g, net.minecraft.Util.getMillis()));
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "curse"), GripClient::overlay);
         event.registerAboveAll(WraithClient.LAYER, WraithClient::overlay);
+        event.registerAboveAll(VoidClient.LAYER, VoidClient::overlay);
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "hud"), HudRenderer::render);
     }
 

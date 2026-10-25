@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "modehud:crush"
+    "modehud:crush",
+    "modehud:erase"
   ]
 }

@@ -46,5 +46,14 @@
   "block.modehud.rough_stone_slab": "Stone Terrain Slab",
   "block.modehud.clay_slab": "Clay Slab",
   "death.attack.modehud_crush": "%1$s was crushed by a cursed will",
-  "death.attack.modehud_crush.player": "%1$s was crushed by the will of %2$s"
+  "death.attack.modehud_crush.player": "%1$s was crushed by the will of %2$s",
+  "death.attack.modehud_erase": "%1$s was erased into shadow",
+  "death.attack.modehud_erase.player": "%1$s was erased into shadow by %2$s",
+  "key.modehud.wraith": "Dark spirit",
+  "key.modehud.void": "Shadow form",
+  "key.modehud.void_dash": "Shadow dash",
+  "key.modehud.void_shockwave": "Void shockwave",
+  "key.modehud.void_tendrils": "Shadow tendrils",
+  "key.modehud.void_devour": "Devour",
+  "key.modehud.void_singularity": "Singularity"
 }

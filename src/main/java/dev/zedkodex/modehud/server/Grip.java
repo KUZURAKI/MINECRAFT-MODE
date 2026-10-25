@@ -55,6 +55,7 @@ public final class Grip {
                 if (h != null) h.dist = Math.max(2.0, Math.min(RANGE, h.dist + msg.value()));
             }
             case GripPayload.CRUSH -> crush(p);
+            case GripPayload.ERASE -> VoidForm.ability(p, dev.zedkodex.modehud.net.AbilityPayload.ERASE, msg.entityId());
             default -> {
             }
         }
