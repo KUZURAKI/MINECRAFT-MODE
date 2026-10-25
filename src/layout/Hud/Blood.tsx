@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import style from "./Hud.module.scss";
 
 const rnd = Math.random;
@@ -28,30 +28,68 @@ const makeSplat = () => {
   };
 };
 
+type Slot = {
+  k: number;
+  on: boolean;
+  out: number;
+  s: ReturnType<typeof makeSplat>;
+};
+
 const Blood = ({ count }: { count: number }) => {
-  const [splats] = useState(() => Array.from({ length: 14 }, makeSplat));
+  const [slots, setSlots] = useState<Slot[]>(() =>
+    Array.from({ length: 14 }, () => ({
+      k: 0,
+      on: false,
+      out: 0,
+      s: makeSplat(),
+    })),
+  );
+
+  useEffect(() => {
+    setSlots((prev) =>
+      prev.map((slot, i) => {
+        const want = i < count;
+        if (want && !slot.on)
+          return { k: slot.k + 1, on: true, out: 0, s: makeSplat() };
+        if (!want && slot.on) return { ...slot, on: false, out: rnd() * 2.6 };
+        return slot;
+      }),
+    );
+  }, [count]);
+
   return (
     <div className={style.blood2} aria-hidden="true">
-      {splats.slice(0, count).map((s, i) => (
-        <div key={i} style={{ left: `${s.x}%`, top: `${s.y}%` }}>
-          <i
-            style={{
-              width: s.u,
-              height: s.u,
-              animationDelay: `${s.delay}s`,
-              boxShadow: s.shadow,
-            }}
-          />
-          <b
-            style={{
-              width: s.u,
-              ["--len" as string]: `${s.len}px`,
-              ["--t" as string]: `${s.t}s`,
-              ["--d" as string]: `${s.delay + 0.8}s`,
-            }}
-          />
-        </div>
-      ))}
+      {slots.map(
+        ({ k, on, out, s }, i) =>
+          k > 0 && (
+            <div
+              key={i + "-" + k}
+              className={on ? "" : style.out}
+              style={{
+                left: `${s.x}%`,
+                top: `${s.y}%`,
+                ["--od" as string]: `${out}s`,
+              }}
+            >
+              <i
+                style={{
+                  width: s.u,
+                  height: s.u,
+                  animationDelay: `${s.delay}s`,
+                  boxShadow: s.shadow,
+                }}
+              />
+              <b
+                style={{
+                  width: s.u,
+                  ["--len" as string]: `${s.len}px`,
+                  ["--t" as string]: `${s.t}s`,
+                  ["--d" as string]: `${s.delay + 0.8}s`,
+                }}
+              />
+            </div>
+          ),
+      )}
     </div>
   );
 };

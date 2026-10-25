@@ -764,3 +764,23 @@ $edge: #000;
     transform: translateY(50px);
   }
 }
+
+.blood2 > .out {
+  animation: splatOut 1.6s ease-in var(--od) forwards;
+}
+
+.leaving {
+  animation: edgeOut 2.6s ease-out forwards;
+}
+
+@keyframes splatOut {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes edgeOut {
+  to {
+    opacity: 0;
+  }
+}

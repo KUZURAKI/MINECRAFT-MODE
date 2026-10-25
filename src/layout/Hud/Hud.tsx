@@ -19,6 +19,19 @@ const useStep = (target: number, ms = 110) => {
 
 const BLEED_MS = [0, 4000, 2000, 800];
 
+const useLinger = (on: boolean, ms: number) => {
+  const [v, setV] = useState(on);
+  useEffect(() => {
+    if (on) {
+      setV(true);
+      return;
+    }
+    const t = setTimeout(() => setV(false), ms);
+    return () => clearTimeout(t);
+  }, [on]);
+  return v;
+};
+
 const clamp = (n: number) => Math.min(Math.max(n, 0), MAX);
 
 const Hud = () => {
@@ -56,6 +69,8 @@ const Hud = () => {
     return () => clearTimeout(hideTimer.current);
   }, []);
 
+  const low = hp <= 6;
+  const edges = useLinger(low, 2800);
   const shownHp = useStep(hp);
   const shownFood = useStep(food);
   const shownWater = useStep(water);
@@ -195,13 +210,13 @@ const Hud = () => {
 
   return (
     <>
-      {hp <= 6 && (
+      {edges && (
         <>
           <div
-            className={`${style.vignette} ${hp <= 3 ? style.critical : ""}`}
+            className={`${style.vignette} ${hp <= 3 ? style.critical : ""} ${low ? "" : style.leaving}`}
           />
           <AsciiBg
-            className={`${style.redAscii} ${hp <= 3 ? style.critical : ""}`}
+            className={`${style.redAscii} ${hp <= 3 ? style.critical : ""} ${low ? "" : style.leaving}`}
             cols={Math.ceil(window.innerWidth / 12)}
             rows={Math.ceil(window.innerHeight / 16)}
             ms={120}
@@ -209,7 +224,7 @@ const Hud = () => {
           />
         </>
       )}
-      {hp <= 6 && <Blood count={hp <= 3 ? 14 : 5} />}
+      <Blood count={hp <= 3 ? 14 : hp <= 6 ? 5 : 0} />
       <aside className={style.hud}>
         <Vitals
           hp={shownHp}
