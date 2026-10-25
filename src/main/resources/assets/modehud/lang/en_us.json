@@ -1,0 +1,8 @@
+{
+  "item.modehud.pills": "Painkillers",
+  "item.modehud.bandage": "Bandage",
+  "itemGroup.modehud": "Mode HUD",
+  "death.attack.modehud_bleed": "%1$s bled out",
+  "death.attack.modehud_bleed.player": "%1$s bled out while fighting %2$s",
+  "death.attack.modehud_thirst": "%1$s died of thirst"
+}

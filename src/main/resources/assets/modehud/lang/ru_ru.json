@@ -1,0 +1,8 @@
+{
+  "item.modehud.pills": "Таблетки",
+  "item.modehud.bandage": "Бинт",
+  "itemGroup.modehud": "Mode HUD",
+  "death.attack.modehud_bleed": "%1$s истёк кровью",
+  "death.attack.modehud_bleed.player": "%1$s истёк кровью в бою с %2$s",
+  "death.attack.modehud_thirst": "%1$s умер от жажды"
+}
