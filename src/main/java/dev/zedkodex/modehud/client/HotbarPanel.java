@@ -22,7 +22,7 @@ public final class HotbarPanel {
         float dt = lastMs == 0 ? 16 : Math.min(100, now - lastMs);
         lastMs = now;
 
-        boolean show = !HudState.dead && (now - HudState.barShowMs < 2000 || Minecraft.getInstance().screen != null);
+        boolean show = !HudState.dead && !HudState.spectator && (now - HudState.barShowMs < 2000 || Minecraft.getInstance().screen != null);
         float k = 1f - (float) Math.exp(-dt / (show ? 90f : 160f));
         shown += ((show ? 1f : 0f) - shown) * k;
         if (shown < 0.01f) return;

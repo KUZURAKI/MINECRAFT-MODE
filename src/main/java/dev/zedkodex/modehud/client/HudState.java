@@ -40,6 +40,10 @@ public final class HudState {
 
     public static boolean active;
     public static boolean dead;
+    public static boolean showVitals = true;
+    public static boolean spectator;
+    public static net.minecraft.client.gui.screens.Screen pendingDeath;
+    public static boolean releasing;
     private static boolean wasDead;
     public static long hudStartMs;
     public static long toastGateMs;
@@ -87,6 +91,7 @@ public final class HudState {
         journeyDone = false;
         dragonShown = false;
         lastDim = null;
+        pendingDeath = null;
         ClientState.reset();
         ToastPanel.reset();
         EyesPanel.reset();
@@ -106,6 +111,7 @@ public final class HudState {
         dragonShown = false;
         lastDim = null;
         bleed = 0;
+        pendingDeath = null;
         ToastPanel.forget();
         BloodPanel.reset();
     }
@@ -126,8 +132,12 @@ public final class HudState {
         long now = Util.getMillis();
         if (!active) start(now);
 
+        showVitals = !p.isCreative() && !p.isSpectator();
+        spectator = p.isSpectator();
+
         boolean nowDead = p.isDeadOrDying();
         if (nowDead) {
+            if (!dead && Config.CLIENT.eyesIntro.get()) EyesPanel.close(now);
             dead = true;
             wasDead = true;
         } else {
@@ -193,6 +203,17 @@ public final class HudState {
         }
 
         if (!dead) trackPlaces(mc, p);
+        releaseDeathScreen(mc, now);
+    }
+
+    public static void releaseDeathScreen(Minecraft mc, long now) {
+        if (pendingDeath != null && EyesPanel.isClosed(now)) {
+            net.minecraft.client.gui.screens.Screen sc = pendingDeath;
+            pendingDeath = null;
+            releasing = true;
+            mc.setScreen(sc);
+            releasing = false;
+        }
     }
 
     private static void trackPlaces(Minecraft mc, Player p) {

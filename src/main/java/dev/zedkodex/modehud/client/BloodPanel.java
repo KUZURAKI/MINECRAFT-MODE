@@ -77,8 +77,8 @@ public final class BloodPanel {
         int w = g.guiWidth();
         int h = g.guiHeight();
         int hp = HudState.hpTarget;
-        boolean low = hp <= 6 && !HudState.dead;
-        boolean critical = hp <= 3 && !HudState.dead;
+        boolean low = hp <= 6 && !HudState.dead && HudState.showVitals;
+        boolean critical = hp <= 3 && !HudState.dead && HudState.showVitals;
 
         float up = 1f - (float) Math.exp(-dt / 250f);
         float down = 1f - (float) Math.exp(-dt / 1000f);

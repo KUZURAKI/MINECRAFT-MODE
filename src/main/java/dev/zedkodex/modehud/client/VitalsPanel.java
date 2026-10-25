@@ -36,7 +36,7 @@ public final class VitalsPanel {
     public static void render(GuiGraphics g, long now) {
         if (!Config.CLIENT.hudEnabled.get()) return;
         long start = HudState.hudStartMs;
-        if (now < start || HudState.hp.shown < 0) return;
+        if (now < start || HudState.hp.shown < 0 || !HudState.showVitals) return;
 
         float dt = lastMs == 0 ? 16 : Math.min(100, now - lastMs);
         lastMs = now;
@@ -54,7 +54,7 @@ public final class VitalsPanel {
         boolean critical = hp <= 3 && !HudState.dead;
         int hpCy = oy + 14;
 
-        bar(g, hpBar, ox + 15, hpCy, 9, 7, 2, hp, HP, HP_D, low, critical, HudState.hpFlashMs, HudState.hpFlashRgb, 600, now, start);
+        bar(g, hpBar, ox + 11, hpCy, 9, 7, 2, hp, HP, HP_D, low, critical, HudState.hpFlashMs, HudState.hpFlashRgb, 600, now, start);
 
         float iconIn = Gfx.clamp((now - start - 100f) / 700f);
         float beat = 1f;
@@ -67,14 +67,14 @@ public final class VitalsPanel {
                     : 1.12f - 0.12f * ((ph - 0.45f) / 0.55f);
         }
         float hpIconScale = (0.4f + 0.6f * Gfx.easeOutBack(iconIn)) * beat;
-        Gfx.icon(g, "hp", ox + 9, hpCy, 20, -12f, hpIconScale, iconIn, 1f - 0.55f * deadMix);
+        Gfx.icon(g, "hp", ox + 6, hpCy, 15, -12f, hpIconScale, iconIn, 1f - 0.55f * deadMix);
 
         if (HudState.bleed > 0 && !HudState.dead) {
             int n = HudState.bleed;
             double dur = n == 1 ? 2000.0 : n == 2 ? 1200.0 : 700.0;
             for (int d = 0; d < n; d++) {
                 float fr = (float) (((now / dur) + d * 0.25) % 1.0);
-                int dx = ox + 5 + d * 5;
+                int dx = ox + 3 + d * 4;
                 int dy = hpCy + 6 + (int) (fr * 12);
                 g.fill(dx, dy, dx + 2, dy + 3, Gfx.rgba(0xC01020, 1f - fr));
             }
@@ -84,7 +84,7 @@ public final class VitalsPanel {
 
         int needCy = hpCy + 13 + Math.round(20 * bleedAnim);
         needRow(g, foodBar, "eat", ox, needCy, 0, HudState.food.shown, FOOD, FOOD_D, HudState.foodFlashMs, 10f, 1100, now, start);
-        needRow(g, waterBar, "water", ox, needCy, 80, HudState.water.shown, WATER, WATER_D, HudState.waterFlashMs, 26f, 1400, now, start);
+        needRow(g, waterBar, "water", ox, needCy, 76, HudState.water.shown, WATER, WATER_D, HudState.waterFlashMs, 26f, 1400, now, start);
 
         if (airAnim > 0.02f) {
             int airCy = needCy + 15 + Math.round((1f - airAnim) * -5);
@@ -95,7 +95,7 @@ public final class VitalsPanel {
     private static void needRow(GuiGraphics g, BarState st, String icon, int ox, int cy, int dx, int value, int rgb, int dark,
                                 long flashMs, float rot, int base, long now, long start) {
         boolean low = value <= 4 && !HudState.dead;
-        bar(g, st, ox + 12 + dx, cy, 5, 5, 1, value, rgb, dark, low, value <= 2, flashMs, 0xFFFFFF, 700, now, start, base);
+        bar(g, st, ox + 8 + dx, cy, 5, 5, 1, value, rgb, dark, low, value <= 2, flashMs, 0xFFFFFF, 700, now, start, base);
         float in = Gfx.clamp((now - start - (base - 500f)) / 700f);
         float shakeX = 0, shakeY = 0;
         if (low) {
@@ -103,20 +103,20 @@ public final class VitalsPanel {
             shakeX = new float[]{0, -1, 1, -1}[step];
             shakeY = new float[]{0, 1, -1, -1}[step];
         }
-        Gfx.icon(g, icon, ox + 7 + dx + shakeX, cy + shakeY, 15, rot, 0.4f + 0.6f * Gfx.easeOutBack(in), in, 1f - 0.55f * deadMix);
+        Gfx.icon(g, icon, ox + 4 + dx + shakeX, cy + shakeY, 11, rot, 0.4f + 0.6f * Gfx.easeOutBack(in), in, 1f - 0.55f * deadMix);
     }
 
     private static void needRowAlpha(GuiGraphics g, BarState st, String icon, int ox, int cy, int dx, int value, int rgb, int dark,
                                      long flashMs, float rot, float alpha, long now, long start) {
         boolean low = value <= 4 && !HudState.dead;
-        barAlpha(g, st, ox + 12 + dx, cy, 5, 5, 1, value, rgb, dark, low, value <= 2, flashMs, 0xFFFFFF, 700, now, start, 0, alpha);
+        barAlpha(g, st, ox + 8 + dx, cy, 5, 5, 1, value, rgb, dark, low, value <= 2, flashMs, 0xFFFFFF, 700, now, start, 0, alpha);
         float shakeX = 0, shakeY = 0;
         if (low) {
             int step = (int) ((now / 100) % 4);
             shakeX = new float[]{0, -1, 1, -1}[step];
             shakeY = new float[]{0, 1, -1, -1}[step];
         }
-        Gfx.icon(g, icon, ox + 7 + dx + shakeX, cy + shakeY, 15, rot, 1f, alpha, 1f - 0.55f * deadMix);
+        Gfx.icon(g, icon, ox + 4 + dx + shakeX, cy + shakeY, 11, rot, 1f, alpha, 1f - 0.55f * deadMix);
     }
 
     private static void bar(GuiGraphics g, BarState st, int x, int cy, int cw, int ch, int gap, int value, int rgb, int dark,
@@ -176,13 +176,13 @@ public final class VitalsPanel {
         int stage = HudState.bleedStage;
         int rgb = STAGE_RGB[stage];
         float shake = stage == 3 ? ((now / 200) % 2 == 0 ? 0f : 1f) : 0f;
-        float cx = ox + 22 + shake;
+        float cx = ox + 14 + shake;
         float cy = y + 11;
-        Gfx.icon(g, "bleed" + stage, cx, cy, 17, 0f, 1f, a);
-        Gfx.text(g, String.valueOf(stage), cx + 3, cy + 2, Gfx.rgba(0xFFFFFF, a), 0.8f, true);
+        Gfx.icon(g, "bleed" + stage, cx, cy, 13, 0f, 1f, a);
+        Gfx.text(g, String.valueOf(stage), cx + 2, cy + 1, Gfx.rgba(0xFFFFFF, a), 0.7f, true);
 
         long el = now - HudState.bleedChangeMs;
         String label = Config.CLIENT.asciiEffects.get() ? Scramble.text("КРОВОТЕЧЕНИЕ", el, 0, 0.6f, "|!.~,", 5) : "КРОВОТЕЧЕНИЕ";
-        Gfx.text(g, label, cx + 11, cy - 3, Gfx.rgba(rgb, a), 0.75f, true);
+        Gfx.text(g, label, cx + 9, cy - 3, Gfx.rgba(rgb, a), 0.75f, true);
     }
 }
