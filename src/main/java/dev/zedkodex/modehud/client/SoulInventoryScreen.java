@@ -28,6 +28,8 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
     private final Player player;
     private final int[] origX;
     private final int[] origY;
+    private final int[] tgtX;
+    private final int[] tgtY;
     private int rawX;
     private int rawY;
     private boolean closing;
@@ -52,6 +54,27 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
             origY[i] = menu.slots.get(i).y;
         }
         arrange();
+        tgtX = new int[n];
+        tgtY = new int[n];
+        for (int i = 0; i < n; i++) {
+            tgtX[i] = menu.slots.get(i).x;
+            tgtY[i] = menu.slots.get(i).y;
+        }
+    }
+
+    private void sort(float v) {
+        int n = tgtX.length;
+        for (int i = 0; i < n; i++) {
+            Slot s = menu.slots.get(i);
+            float delay = (Gfx.hash(i * 37 + 11) % 1000) / 1000f * 0.45f;
+            float t = Gfx.clamp((v - delay) / 0.55f);
+            float e = 1f - (float) Math.pow(1f - t, 3);
+            float swirl = (1f - e);
+            double ang = i * 2.39996 + swirl * 4.0;
+            float r = swirl * (70f + Gfx.hash(i * 17 + 3) % 50);
+            s.x = tgtX[i] + (int) (Math.cos(ang) * r) - (int) (swirl * 120f);
+            s.y = tgtY[i] + (int) (Math.sin(ang) * r) + (int) (swirl * 30f);
+        }
     }
 
     private void put(int index, int cardX, int cardY) {
@@ -175,6 +198,12 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
             return;
         }
         layout(v);
+        sort(v);
+        g.pose().pushPose();
+        g.pose().translate(0f, 0f, -2000f);
+        SoulFx.render(g, net.minecraft.Util.getMillis(), SoulView.raw(), v, width, height,
+                width * 0.2f, height * 0.55f, pivotX, pivotY);
+        g.pose().popPose();
         rawX = mx;
         rawY = my;
         double[] m = unproject(mx, my);
@@ -256,8 +285,8 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
         int selected = player.getInventory().selected;
         for (Slot s : menu.slots) {
             boolean active = s.index == 36 + selected;
-            int x = s.x - 2;
-            int y = s.y - 2;
+            int x = tgtX[s.index] - 2;
+            int y = tgtY[s.index] - 2;
             card(g, x, y, v, s.index == 0, active, s == hoveredSlot);
             g.pose().pushPose();
             g.pose().translate(0f, 0f, 6f);
