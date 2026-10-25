@@ -172,6 +172,8 @@ public class ModeHud {
                 (payload, ctx) -> ctx.enqueueWork(() -> {
                     if (ctx.player() instanceof ServerPlayer sp) dev.zedkodex.modehud.server.Grip.handle(sp, payload);
                 }));
+        reg.playToClient(dev.zedkodex.modehud.net.WraithPayload.TYPE, dev.zedkodex.modehud.net.WraithPayload.CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> dev.zedkodex.modehud.client.WraithClient.apply(payload)));
         reg.playToServer(ActionPayload.TYPE, ActionPayload.CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
                     if (ctx.player() instanceof ServerPlayer sp) Actions.handle(sp, payload.action());

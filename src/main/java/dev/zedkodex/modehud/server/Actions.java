@@ -35,6 +35,8 @@ public final class Actions {
             case ActionPayload.CRASH -> {
                 if (p.getVehicle() instanceof Plane plane && plane.measuredSpeed() > 0.35) plane.crash();
             }
+            case ActionPayload.WRAITH_ON -> Wraith.toggle(p, true);
+            case ActionPayload.WRAITH_OFF -> Wraith.toggle(p, false);
             default -> {
             }
         }

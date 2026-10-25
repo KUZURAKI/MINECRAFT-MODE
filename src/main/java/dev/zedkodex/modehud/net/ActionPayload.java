@@ -14,6 +14,8 @@ public record ActionPayload(int action) implements CustomPacketPayload {
     public static final int PRIMARY = 3;
     public static final int SECONDARY = 4;
     public static final int CRASH = 5;
+    public static final int WRAITH_ON = 6;
+    public static final int WRAITH_OFF = 7;
 
     public static final Type<ActionPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "action"));
 

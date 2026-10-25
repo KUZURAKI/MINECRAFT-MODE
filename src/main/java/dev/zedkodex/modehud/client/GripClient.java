@@ -142,7 +142,7 @@ public final class GripClient {
             event.setCanceled(true);
             return;
         }
-        if (event.isUseItem() && event.getHand() == InteractionHand.MAIN_HAND && hovered >= 0 && able(mc, p)) {
+        if (event.isUseItem() && event.getHand() == InteractionHand.MAIN_HAND && hovered >= 0 && able(mc, p) && !mc.options.keySprint.isDown()) {
             send(GripPayload.START, hovered, 0f);
             gripping = true;
             gripId = hovered;

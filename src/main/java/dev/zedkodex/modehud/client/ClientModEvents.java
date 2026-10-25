@@ -52,6 +52,7 @@ public class ClientModEvents {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "weather"),
                 (g, delta) -> WeatherPanel.render(g, net.minecraft.Util.getMillis()));
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "curse"), GripClient::overlay);
+        event.registerAboveAll(WraithClient.LAYER, WraithClient::overlay);
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "hud"), HudRenderer::render);
     }
 
