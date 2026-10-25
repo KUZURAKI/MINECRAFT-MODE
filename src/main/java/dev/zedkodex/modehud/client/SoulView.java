@@ -122,7 +122,8 @@ public final class SoulView {
             }
         }
         cam.setPosition(to);
-        event.setDistance(event.getDistance() * (1f - e) + DISTANCE * e);
+        float start = fromFirst ? 0f : event.getDistance();
+        event.setDistance(start + (DISTANCE - start) * e);
     }
 
     @SubscribeEvent

@@ -105,7 +105,7 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
 
     private void layout(float v) {
         scale = Math.min(height * 0.8f / H, width * 0.44f / W);
-        pivotX = width * 0.74f + (1f - v) * width * 0.65f;
+        pivotX = width * 0.66f + (1f - v) * width * 0.65f;
         pivotY = height * 0.5f;
         angle = TILT * v;
     }
