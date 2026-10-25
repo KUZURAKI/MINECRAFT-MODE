@@ -24,6 +24,8 @@ public class Vitals implements INBTSerializable<CompoundTag> {
     public int clotTimer;
     public int thirstTimer;
     public int regenTimer;
+    public int healTicks;
+    public int healLeft;
 
     public int fxKind;
     public int fxN;

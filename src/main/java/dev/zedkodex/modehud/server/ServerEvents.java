@@ -3,6 +3,7 @@ package dev.zedkodex.modehud.server;
 import dev.zedkodex.modehud.Config;
 import dev.zedkodex.modehud.ModeHud;
 import dev.zedkodex.modehud.data.Vitals;
+import dev.zedkodex.modehud.net.BandagePayload;
 import dev.zedkodex.modehud.net.PortalPayload;
 import dev.zedkodex.modehud.net.VitalsPayload;
 import net.minecraft.core.component.DataComponents;
@@ -54,6 +55,7 @@ public class ServerEvents {
             thirst(p, v);
             bleeding(p, v);
             regen(p, v);
+            bandageHeal(p, v);
         }
         sync(p, v, false, false);
     }
@@ -139,6 +141,29 @@ public class ServerEvents {
             p.heal(1f);
             v.debt = Math.max(0f, v.debt - 1f);
             v.fx(Vitals.FX_HEAL);
+        }
+    }
+
+    private static void bandageHeal(ServerPlayer p, Vitals v) {
+        if (v.healTicks <= 0) return;
+        v.healTicks--;
+        int interval = Math.max(1, Config.COMMON.bandageHealTicks.get() / Config.COMMON.bandageHeal.get());
+        if (v.healLeft > 0 && v.healTicks % interval == 0) {
+            p.heal(1f);
+            v.healLeft--;
+            v.fx(Vitals.FX_HEAL);
+        }
+        if (v.healTicks <= 0) {
+            v.healLeft = 0;
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(p, new BandagePayload(p.getId(), 0));
+        }
+    }
+
+    @SubscribeEvent
+    static void onStartTracking(PlayerEvent.StartTracking event) {
+        if (event.getTarget() instanceof ServerPlayer target && event.getEntity() instanceof ServerPlayer viewer) {
+            int left = target.getData(ModeHud.VITALS).healTicks;
+            if (left > 0) PacketDistributor.sendToPlayer(viewer, new BandagePayload(target.getId(), left));
         }
     }
 

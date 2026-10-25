@@ -40,6 +40,9 @@ public class Config {
 
         public final ModConfigSpec.IntValue pillsHeal;
         public final ModConfigSpec.IntValue debtRegenTicks;
+        public final ModConfigSpec.IntValue bandageWrapTicks;
+        public final ModConfigSpec.IntValue bandageHealTicks;
+        public final ModConfigSpec.IntValue bandageHeal;
 
         Common(ModConfigSpec.Builder b) {
             b.push("thirst");
@@ -68,6 +71,9 @@ public class Config {
             b.push("healing");
             pillsHeal = b.comment("Hp restored by painkillers").defineInRange("pillsHeal", 6, 1, 20);
             debtRegenTicks = b.comment("Ticks between 1 hp restored after hunger, thirst or drowning damage once the cause is fixed").defineInRange("debtRegenTicks", 50, 5, 600);
+            bandageWrapTicks = b.comment("Ticks of one bandage wrap, three wraps per use").defineInRange("bandageWrapTicks", 20, 5, 80);
+            bandageHealTicks = b.comment("Ticks the bandage keeps healing after it is wrapped").defineInRange("bandageHealTicks", 240, 40, 2400);
+            bandageHeal = b.comment("Hp restored over the bandage healing time").defineInRange("bandageHeal", 6, 1, 20);
             b.pop();
         }
     }
@@ -80,6 +86,7 @@ public class Config {
         public final ModConfigSpec.BooleanValue asciiEffects;
         public final ModConfigSpec.DoubleValue hudScale;
         public final ModConfigSpec.DoubleValue toastScale;
+        public final ModConfigSpec.DoubleValue wrapSpeed;
 
         Client(ModConfigSpec.Builder b) {
             hudEnabled = b.comment("Replace the vanilla hud").define("hudEnabled", true);
@@ -89,6 +96,7 @@ public class Config {
             asciiEffects = b.comment("Symbol effects (ascii) on text and backgrounds").define("asciiEffects", true);
             hudScale = b.comment("Size of the vitals panel and hotbar").defineInRange("hudScale", 0.6, 0.25, 3.0);
             toastScale = b.comment("Size of biome and realm notifications").defineInRange("toastScale", 0.75, 0.25, 3.0);
+            wrapSpeed = b.comment("Movement speed while wrapping a bandage, 1.0 is normal walking").defineInRange("wrapSpeed", 0.55, 0.2, 1.0);
         }
     }
 }

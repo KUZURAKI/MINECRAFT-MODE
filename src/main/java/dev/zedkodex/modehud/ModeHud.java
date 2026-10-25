@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import dev.zedkodex.modehud.data.Vitals;
 import dev.zedkodex.modehud.item.MedItem;
+import dev.zedkodex.modehud.net.BandagePayload;
 import dev.zedkodex.modehud.net.ClientState;
 import dev.zedkodex.modehud.net.PortalPayload;
 import dev.zedkodex.modehud.net.VitalsPayload;
@@ -63,5 +64,10 @@ public class ModeHud {
                 (payload, ctx) -> ctx.enqueueWork(() -> ClientState.apply(payload)));
         event.registrar("1").playToClient(PortalPayload.TYPE, PortalPayload.CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> ClientState.portals.add(payload.kind())));
+        event.registrar("1").playToClient(BandagePayload.TYPE, BandagePayload.CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> {
+                    if (payload.ticks() <= 0) ClientState.bandaged.remove(payload.entityId());
+                    else ClientState.bandaged.put(payload.entityId(), System.currentTimeMillis() + payload.ticks() * 50L);
+                }));
     }
 }
