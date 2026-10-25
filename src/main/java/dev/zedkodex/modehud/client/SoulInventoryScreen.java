@@ -14,23 +14,22 @@ import net.minecraft.world.inventory.Slot;
 
 public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> {
     private static final int ACCENT = 0x8FE3FF;
-    private static final float OPEN_MS = 900f;
-    private static final float OPEN_DELAY = 250f;
-    private static final float CLOSE_MS = 320f;
+    private static final float PANEL_START = 0.25f;
+    private static final int CARD = 20;
+    private static final int PITCH = 23;
     private static final float TILT = (float) Math.toRadians(15.0);
-    private static final int W = 188;
-    private static final int H = 196;
+    private static final int W = 216;
+    private static final int H = 223;
     private static final float CX = W / 2f;
     private static final float CY = H / 2f;
-    private static final float DEPTH_SCALE = 0.01f;
+    private static final float DEPTH_SCALE = 0.05f;
+    private static final float LAYER = 0.5f;
 
     private final Player player;
     private final int[] origX;
     private final int[] origY;
     private int rawX;
     private int rawY;
-    private long openMs;
-    private long closeMs;
     private boolean closing;
     private float scale = 1f;
     private float pivotX;
@@ -57,22 +56,22 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
 
     private void put(int index, int cardX, int cardY) {
         Slot s = menu.slots.get(index);
-        s.x = cardX + 1;
-        s.y = cardY + 1;
+        s.x = cardX + 2;
+        s.y = cardY + 2;
     }
 
     private void arrange() {
-        put(0, 165, 35);
-        put(1, 105, 25);
-        put(2, 125, 25);
-        put(3, 105, 45);
-        put(4, 125, 45);
-        for (int i = 0; i < 4; i++) put(5 + i, 71, 5 + i * 20);
+        put(0, 187, 40);
+        put(1, 116, 29);
+        put(2, 116 + PITCH, 29);
+        put(3, 116, 29 + PITCH);
+        put(4, 116 + PITCH, 29 + PITCH);
+        for (int i = 0; i < 4; i++) put(5 + i, 76, 6 + i * PITCH);
         for (int r = 0; r < 3; r++) {
-            for (int c = 0; c < 9; c++) put(9 + r * 9 + c, 5 + c * 20, 99 + r * 20);
+            for (int c = 0; c < 9; c++) put(9 + r * 9 + c, 6 + c * PITCH, 113 + r * PITCH);
         }
-        for (int c = 0; c < 9; c++) put(36 + c, 5 + c * 20, 173);
-        if (menu.slots.size() > 45) put(45, 5, 65);
+        for (int c = 0; c < 9; c++) put(36 + c, 6 + c * PITCH, 197);
+        if (menu.slots.size() > 45) put(45, 6, 75);
     }
 
     @Override
@@ -90,20 +89,17 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
         super.init();
         leftPos = 0;
         topPos = 0;
-        if (openMs == 0) openMs = Util.getMillis();
         SoulView.open();
     }
 
-    private float visibility(long now) {
-        if (closing) return 1f - Gfx.smooth(Gfx.clamp((now - closeMs) / CLOSE_MS));
-        return Gfx.smooth(Gfx.clamp((now - openMs - OPEN_DELAY) / OPEN_MS));
+    private float visibility() {
+        return Gfx.smooth(Gfx.clamp((SoulView.raw() - PANEL_START) / (1f - PANEL_START)));
     }
 
     @Override
     public void onClose() {
         if (closing) return;
         closing = true;
-        closeMs = Util.getMillis();
         SoulView.close();
     }
 
@@ -173,9 +169,8 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
 
     @Override
     public void render(GuiGraphics g, int mx, int my, float pt) {
-        long now = Util.getMillis();
-        float v = visibility(now);
-        if (closing && v <= 0f) {
+        float v = visibility();
+        if (closing && SoulView.raw() <= PANEL_START) {
             super.onClose();
             return;
         }
@@ -223,27 +218,26 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
     }
 
     private void box(GuiGraphics g, int x0, int y0, int x1, int y1, float v) {
-        g.fill(x0 + 2, y0, x1 - 2, y1, Gfx.rgba(0x070A10, 0.86f * v));
-        g.fill(x0, y0 + 2, x0 + 2, y1 - 2, Gfx.rgba(0x070A10, 0.86f * v));
-        g.fill(x1 - 2, y0 + 2, x1, y1 - 2, Gfx.rgba(0x070A10, 0.86f * v));
-        g.fill(x0 + 1, y0 + 1, x0 + 2, y0 + 2, Gfx.rgba(0x070A10, 0.86f * v));
-        g.fill(x1 - 2, y0 + 1, x1 - 1, y0 + 2, Gfx.rgba(0x070A10, 0.86f * v));
-        g.fill(x0 + 1, y1 - 2, x0 + 2, y1 - 1, Gfx.rgba(0x070A10, 0.86f * v));
-        g.fill(x1 - 2, y1 - 2, x1 - 1, y1 - 1, Gfx.rgba(0x070A10, 0.86f * v));
-        g.fill(x0 + 2, y0, x1 - 2, y0 + 1, Gfx.rgba(ACCENT, 0.45f * v));
-        g.fill(x0 + 2, y1 - 1, x1 - 2, y1, Gfx.rgba(ACCENT, 0.12f * v));
+        g.fill(x0, y0, x1, y1, Gfx.rgba(0x000000, 0.32f * v));
+    }
+
+    private void layer(GuiGraphics g, int x0, int y0, int x1, int y1, int argb) {
+        g.pose().translate(0f, 0f, LAYER);
+        g.fill(x0, y0, x1, y1, argb);
     }
 
     private void card(GuiGraphics g, int x, int y, float v, boolean result, boolean active, boolean hover) {
-        int o = hover ? 1 : 0;
-        g.fill(x - o, y - o, x + 18 + o, y + 18 + o, Gfx.rgba(0x000000, 0.9f * v));
-        g.fill(x + 1 - o, y + 1 - o, x + 17 + o, y + 17 + o, Gfx.rgba(result ? 0x1B2E40 : 0x12161F, 0.75f * v));
-        g.fill(x + 1 - o, y + 1 - o, x + 17 + o, y + 2 - o, Gfx.rgba(0xFFFFFF, 0.28f * v));
-        g.fill(x + 1 - o, y + 1 - o, x + 2 - o, y + 17 + o, Gfx.rgba(0xFFFFFF, 0.28f * v));
-        g.fill(x + 1 - o, y + 16 + o, x + 17 + o, y + 17 + o, Gfx.rgba(0x000000, 0.35f * v));
-        g.fill(x + 16 + o, y + 1 - o, x + 17 + o, y + 17 + o, Gfx.rgba(0x000000, 0.35f * v));
-        if (result) g.fill(x + 1, y + 1, x + 17, y + 17, Gfx.rgba(ACCENT, 0.12f * v));
-        if (active || hover) g.fill(x + 1, y + 1, x + 17, y + 17, Gfx.rgba(0xFFFFFF, (hover ? 0.1f : 0.16f) * v));
+        g.pose().pushPose();
+        layer(g, x - 1, y - 1, x + CARD + 1, y + CARD + 1, Gfx.rgba(0x000000, 0.9f * v));
+        layer(g, x, y, x + CARD, y + CARD, Gfx.rgba(0x12161F, 0.6f * v));
+        layer(g, x, y, x + CARD, y + 1, Gfx.rgba(0xFFFFFF, 0.28f * v));
+        layer(g, x, y, x + 1, y + CARD, Gfx.rgba(0xFFFFFF, 0.28f * v));
+        layer(g, x, y + CARD - 1, x + CARD, y + CARD, Gfx.rgba(0x000000, 0.35f * v));
+        layer(g, x + CARD - 1, y, x + CARD, y + CARD, Gfx.rgba(0x000000, 0.35f * v));
+        if (result) layer(g, x + 1, y + 1, x + CARD - 1, y + CARD - 1, Gfx.rgba(ACCENT, 0.12f * v));
+        if (active) layer(g, x + 1, y + 1, x + CARD - 1, y + CARD - 1, Gfx.rgba(0xFFFFFF, 0.14f * v));
+        if (hover) layer(g, x + 1, y + 1, x + CARD - 1, y + CARD - 1, Gfx.rgba(0xFFFFFF, 0.1f * v));
+        g.pose().popPose();
     }
 
     private void stat(GuiGraphics g, String icon, float x, float y, String text, float v) {
@@ -253,27 +247,42 @@ public class SoulInventoryScreen extends AbstractContainerScreen<InventoryMenu> 
 
     private void drawPanel(GuiGraphics g, float v) {
         g.pose().pushPose();
-        box(g, 0, 0, 94, 88, v);
-        box(g, 100, 0, 188, 88, v);
-        box(g, 0, 94, 188, 162, v);
-        box(g, 0, 168, 188, 196, v);
+        box(g, 0, 0, 102, 101, v);
+        box(g, 108, 0, W, 101, v);
+        box(g, 0, 107, W, 185, v);
+        box(g, 0, 191, W, H, v);
 
-        g.pose().translate(0f, 0f, 1f);
+        g.pose().translate(0f, 0f, 2f);
         int selected = player.getInventory().selected;
         for (Slot s : menu.slots) {
-            card(g, s.x - 1, s.y - 1, v, s.index == 0, s.index == 36 + selected, s == hoveredSlot);
+            boolean active = s.index == 36 + selected;
+            int x = s.x - 2;
+            int y = s.y - 2;
+            card(g, x, y, v, s.index == 0, active, s == hoveredSlot);
+            g.pose().pushPose();
+            g.pose().translate(0f, 0f, 6f);
+            if (s.index >= 36 && s.index <= 44) {
+                Gfx.text(g, String.valueOf(s.index - 35), x + 2, y + 2, Gfx.rgba(0xFFFFFF, 0.55f * v), 0.5f, true);
+            }
+            if (active) {
+                int dx = x + CARD / 2 - 1;
+                int dy = y + CARD + 2;
+                layer(g, dx - 1, dy - 1, dx + 4, dy + 4, Gfx.rgba(0x000000, v));
+                layer(g, dx, dy, dx + 3, dy + 3, Gfx.rgba(0xFFFFFF, v));
+            }
+            g.pose().popPose();
         }
 
-        g.pose().translate(0f, 0f, 1f);
+        g.pose().translate(0f, 0f, 8f);
         float hp = HudState.hp.shown >= 0 ? HudState.hp.shown : player.getHealth();
         int water = HudState.water.shown >= 0 ? HudState.water.shown : 20;
-        stat(g, "lvl", 5f, 5f, "LVL " + player.experienceLevel, v);
-        g.fill(6, 17, 64, 19, Gfx.rgba(0x000000, 0.6f * v));
-        g.fill(6, 17, 6 + (int) (58 * player.experienceProgress), 19, Gfx.rgba(ACCENT, 0.9f * v));
-        stat(g, "hp", 5f, 23f, (int) Math.ceil(hp) + "/" + (int) player.getMaxHealth(), v);
-        stat(g, "eat", 5f, 35f, String.valueOf(player.getFoodData().getFoodLevel()), v);
-        stat(g, "water", 5f, 47f, String.valueOf(water), v);
-        Gfx.text(g, "->", 149, 40, Gfx.rgba(ACCENT, 0.85f * v), 1.1f, false);
+        stat(g, "lvl", 6f, 6f, "LVL " + player.experienceLevel, v);
+        layer(g, 7, 19, 68, 21, Gfx.rgba(0x000000, 0.6f * v));
+        layer(g, 7, 19, 7 + (int) (61 * player.experienceProgress), 21, Gfx.rgba(ACCENT, 0.9f * v));
+        stat(g, "hp", 6f, 25f, (int) Math.ceil(hp) + "/" + (int) player.getMaxHealth(), v);
+        stat(g, "eat", 6f, 38f, String.valueOf(player.getFoodData().getFoodLevel()), v);
+        stat(g, "water", 6f, 51f, String.valueOf(water), v);
+        Gfx.text(g, "->", 167, 45, Gfx.rgba(ACCENT, 0.85f * v), 1.1f, false);
         g.pose().popPose();
     }
 }

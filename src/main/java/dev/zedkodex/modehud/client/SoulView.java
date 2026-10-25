@@ -24,11 +24,10 @@ import net.neoforged.neoforge.client.event.ViewportEvent;
 public final class SoulView {
     private SoulView() {}
 
-    private static final float DISTANCE = 4.0f;
-    private static final float SHIFT = 2.3f;
-    private static final float SCREEN_X = 0.33f;
-    private static final float OPEN_MS = 950f;
-    private static final float CLOSE_MS = 380f;
+    private static final float DISTANCE = 2.2f;
+    private static final float SCREEN_X = 0.2f;
+    private static final float OPEN_MS = 1100f;
+    private static final float CLOSE_MS = 800f;
 
     private static float raw;
     private static boolean target;
@@ -50,6 +49,10 @@ public final class SoulView {
 
     public static void close() {
         target = false;
+    }
+
+    public static float raw() {
+        return raw;
     }
 
     public static float progress() {
@@ -95,23 +98,30 @@ public final class SoulView {
         advance();
         float e = progress();
         if (e <= 0f) return;
-        Minecraft mc = Minecraft.getInstance();
-        double aspect = (double) mc.getWindow().getWidth() / Math.max(1, mc.getWindow().getHeight());
-        double tanV = Math.tan(Math.toRadians(mc.options.fov().get()) / 2.0);
-        double off = Math.toDegrees(Math.atan((0.5 - SCREEN_X) * 2.0 * tanV * aspect));
-        net.minecraft.client.Camera cam = event.getCamera();
-        org.joml.Vector3f left = cam.getLeftVector();
-        net.minecraft.world.phys.Vec3 pos = cam.getPosition().add(-left.x * SHIFT * e, -left.y * SHIFT * e, -left.z * SHIFT * e);
-        cam.setPosition(pos);
-        double lateral = Math.toDegrees(Math.atan(SHIFT / DISTANCE));
-        event.setYaw(event.getYaw() + (float) ((off - lateral) * e));
-        event.setPitch(Mth.lerp(e, event.getPitch(), 8f));
+        event.setPitch(Mth.lerp(e, event.getPitch(), 5f));
     }
 
     @SubscribeEvent
     static void onDistance(CalculateDetachedCameraDistanceEvent event) {
         float e = progress();
         if (e <= 0f) return;
+        Minecraft mc = Minecraft.getInstance();
+        double aspect = (double) mc.getWindow().getWidth() / Math.max(1, mc.getWindow().getHeight());
+        double tanV = Math.tan(Math.toRadians(mc.options.fov().get()) / 2.0);
+        double shift = DISTANCE * (0.5 - SCREEN_X) * 2.0 * tanV * aspect * e;
+        net.minecraft.client.Camera cam = event.getCamera();
+        org.joml.Vector3f left = cam.getLeftVector();
+        net.minecraft.world.phys.Vec3 from = cam.getPosition();
+        net.minecraft.world.phys.Vec3 to = from.add(-left.x * shift, -left.y * shift, -left.z * shift);
+        if (mc.level != null) {
+            net.minecraft.world.phys.HitResult hit = mc.level.clip(new net.minecraft.world.level.ClipContext(from, to,
+                    net.minecraft.world.level.ClipContext.Block.VISUAL, net.minecraft.world.level.ClipContext.Fluid.NONE, cam.getEntity()));
+            if (hit.getType() != net.minecraft.world.phys.HitResult.Type.MISS) {
+                net.minecraft.world.phys.Vec3 at = hit.getLocation();
+                to = at.add(from.subtract(at).normalize().scale(0.2));
+            }
+        }
+        cam.setPosition(to);
         event.setDistance(event.getDistance() * (1f - e) + DISTANCE * e);
     }
 
