@@ -46,6 +46,11 @@ public final class ToastPanel {
 
     public static void render(GuiGraphics g, long now) {
         if (!Config.CLIENT.notifications.get()) return;
+        if (!HudState.showVitals) {
+            queue.clear();
+            current = null;
+            return;
+        }
         if (current != null && now - startMs > DURATION) {
             current = null;
             nextAllowed = now + 350;
