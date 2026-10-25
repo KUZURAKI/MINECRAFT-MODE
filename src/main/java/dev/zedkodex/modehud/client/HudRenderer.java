@@ -23,8 +23,14 @@ public final class HudRenderer {
         g.pose().scale(hs, hs, 1f);
         Gfx.vw = Math.round(g.guiWidth() / hs);
         Gfx.vh = Math.round(g.guiHeight() / hs);
-        VitalsPanel.render(g, now);
-        HotbarPanel.render(g, now, p);
+        float soul = SoulView.progress();
+        if (soul < 0.99f) {
+            g.pose().pushPose();
+            g.pose().translate(-soul * 340f, 0f, 0f);
+            VitalsPanel.render(g, now);
+            g.pose().popPose();
+            HotbarPanel.render(g, now, p);
+        }
         g.pose().popPose();
 
         float ts = Config.CLIENT.toastScale.get().floatValue();
