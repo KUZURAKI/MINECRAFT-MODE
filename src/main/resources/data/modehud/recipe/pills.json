@@ -4,7 +4,7 @@
   "ingredients": [
     { "item": "minecraft:sugar" },
     { "item": "minecraft:bone_meal" },
-    { "item": "minecraft:glistering_melon_slice" }
+    { "item": "minecraft:dandelion" }
   ],
   "result": { "id": "modehud:pills", "count": 3 }
 }
