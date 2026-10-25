@@ -3,7 +3,11 @@ package dev.zedkodex.modehud;
 import java.util.function.Supplier;
 
 import dev.zedkodex.modehud.data.Vitals;
+import dev.zedkodex.modehud.entity.Motorcycle;
 import dev.zedkodex.modehud.item.MedItem;
+import dev.zedkodex.modehud.item.MotorcycleItem;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import dev.zedkodex.modehud.net.BandagePayload;
 import dev.zedkodex.modehud.net.ClientState;
 import dev.zedkodex.modehud.net.PortalPayload;
@@ -37,6 +41,18 @@ public class ModeHud {
     public static final DeferredItem<Item> BANDAGE = ITEMS.register("bandage",
             () -> new MedItem(new Item.Properties().stacksTo(16), MedItem.Kind.BANDAGE));
 
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, MODID);
+
+    public static final Supplier<EntityType<Motorcycle>> MOTORCYCLE = ENTITIES.register("motorcycle",
+            () -> EntityType.Builder.<Motorcycle>of(Motorcycle::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("motorcycle"));
+
+    public static final DeferredItem<Item> MOTORCYCLE_ITEM = ITEMS.register("motorcycle",
+            () -> new MotorcycleItem(new Item.Properties().stacksTo(1)));
+
     public static final Supplier<AttachmentType<Vitals>> VITALS = ATTACHMENTS.register("vitals",
             () -> AttachmentType.serializable(Vitals::new).build());
 
@@ -47,6 +63,7 @@ public class ModeHud {
                     .displayItems((params, out) -> {
                         out.accept(PILLS.get());
                         out.accept(BANDAGE.get());
+                        out.accept(MOTORCYCLE_ITEM.get());
                     })
                     .build());
 
@@ -54,6 +71,7 @@ public class ModeHud {
         ITEMS.register(bus);
         TABS.register(bus);
         ATTACHMENTS.register(bus);
+        ENTITIES.register(bus);
         bus.addListener(ModeHud::registerPayloads);
         container.registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
         container.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);

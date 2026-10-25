@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["II ", "WFW", "I I"],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "W": { "item": "minecraft:black_wool" },
+    "F": { "item": "minecraft:furnace" }
+  },
+  "result": { "id": "modehud:motorcycle", "count": 1 }
+}

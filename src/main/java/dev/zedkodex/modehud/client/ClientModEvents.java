@@ -18,6 +18,11 @@ public class ClientModEvents {
     }
 
     @SubscribeEvent
+    static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModeHud.MOTORCYCLE.get(), MotorcycleRenderer::new);
+    }
+
+    @SubscribeEvent
     static void onAddLayers(EntityRenderersEvent.AddLayers event) {
         BandageModel model = new BandageModel(event.getEntityModels().bakeLayer(BandageModel.LAYER));
         BandageModel.shared = model;

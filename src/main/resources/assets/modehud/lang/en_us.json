@@ -4,5 +4,11 @@
   "itemGroup.modehud": "Mode HUD",
   "death.attack.modehud_bleed": "%1$s bled out",
   "death.attack.modehud_bleed.player": "%1$s bled out while fighting %2$s",
-  "death.attack.modehud_thirst": "%1$s died of thirst"
+  "death.attack.modehud_thirst": "%1$s died of thirst",
+  "item.modehud.motorcycle": "Motorcycle",
+  "entity.modehud.motorcycle": "Motorcycle",
+  "message.modehud.need_coal": "Fill the tank with coal first",
+  "message.modehud.out_of_fuel": "Out of fuel",
+  "message.modehud.tank_full": "The tank is full",
+  "message.modehud.fuel": "Fuel: %s%%"
 }

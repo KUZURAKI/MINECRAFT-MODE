@@ -4,5 +4,11 @@
   "itemGroup.modehud": "Mode HUD",
   "death.attack.modehud_bleed": "%1$s истёк кровью",
   "death.attack.modehud_bleed.player": "%1$s истёк кровью в бою с %2$s",
-  "death.attack.modehud_thirst": "%1$s умер от жажды"
+  "death.attack.modehud_thirst": "%1$s умер от жажды",
+  "item.modehud.motorcycle": "Мотоцикл",
+  "entity.modehud.motorcycle": "Мотоцикл",
+  "message.modehud.need_coal": "Сначала заправьте бак углём",
+  "message.modehud.out_of_fuel": "Топливо закончилось",
+  "message.modehud.tank_full": "Бак полный",
+  "message.modehud.fuel": "Топливо: %s%%"
 }
