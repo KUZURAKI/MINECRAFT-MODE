@@ -10,7 +10,6 @@ import net.minecraft.client.resources.PlayerSkin;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.level.GrassColor;
 import dev.zedkodex.modehud.world.ModBlocks;
@@ -29,7 +28,6 @@ public class ClientModEvents {
         for (PlayerSkin.Model skin : event.getSkins()) {
             if (event.getSkin(skin) instanceof PlayerRenderer renderer) {
                 renderer.addLayer(new BandageLayer(renderer, model));
-                renderer.addLayer(new BackpackLayer(renderer));
             }
         }
     }
@@ -39,12 +37,6 @@ public class ClientModEvents {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "weather"),
                 (g, delta) -> WeatherPanel.render(g, net.minecraft.Util.getMillis()));
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "hud"), HudRenderer::render);
-    }
-
-    @SubscribeEvent
-    static void onKeys(RegisterKeyMappingsEvent event) {
-        event.register(ModKeys.OPEN_BACKPACK);
-        event.register(ModKeys.TAKE_OFF_BACKPACK);
     }
 
     @SubscribeEvent
