@@ -11,7 +11,6 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.level.GrassColor;
 import dev.zedkodex.modehud.world.ModBlocks;
@@ -24,18 +23,6 @@ public class ClientModEvents {
     }
 
     @SubscribeEvent
-    static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModeHud.MOTORCYCLE.get(), MotorcycleRenderer::new);
-        event.registerEntityRenderer(ModeHud.CAR.get(), VehicleRenderers.CarRenderer::new);
-        event.registerEntityRenderer(ModeHud.FIGHTER.get(), c -> new VehicleRenderers.PlaneRenderer<>(c, "fighter", 0.9f, 1.5f));
-        event.registerEntityRenderer(ModeHud.BOMBER.get(), c -> new VehicleRenderers.PlaneRenderer<>(c, "bomber", 0.8f, 2.5f));
-        event.registerEntityRenderer(ModeHud.TARANTULA.get(), VehicleRenderers.TarantulaRenderer::new);
-        event.registerEntityRenderer(ModeHud.MISSILE.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(ModeHud.BOMB.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(ModeHud.WEB_SHOT.get(), ThrownItemRenderer::new);
-    }
-
-    @SubscribeEvent
     static void onAddLayers(EntityRenderersEvent.AddLayers event) {
         BandageModel model = new BandageModel(event.getEntityModels().bakeLayer(BandageModel.LAYER));
         BandageModel.shared = model;
@@ -43,7 +30,6 @@ public class ClientModEvents {
             if (event.getSkin(skin) instanceof PlayerRenderer renderer) {
                 renderer.addLayer(new BandageLayer(renderer, model));
                 renderer.addLayer(new BackpackLayer(renderer));
-                renderer.addLayer(new VoidLayer(renderer));
             }
         }
     }
@@ -52,9 +38,6 @@ public class ClientModEvents {
     static void onRegisterLayers(RegisterGuiLayersEvent event) {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "weather"),
                 (g, delta) -> WeatherPanel.render(g, net.minecraft.Util.getMillis()));
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "curse"), GripClient::overlay);
-        event.registerAboveAll(WraithClient.LAYER, WraithClient::overlay);
-        event.registerAboveAll(VoidClient.LAYER, VoidClient::overlay);
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "hud"), HudRenderer::render);
     }
 
@@ -62,7 +45,6 @@ public class ClientModEvents {
     static void onKeys(RegisterKeyMappingsEvent event) {
         event.register(ModKeys.OPEN_BACKPACK);
         event.register(ModKeys.TAKE_OFF_BACKPACK);
-        event.register(ModKeys.EXIT_VEHICLE);
     }
 
     @SubscribeEvent

@@ -41,14 +41,6 @@ public final class HudRenderer {
         ToastPanel.render(g, now);
         g.pose().popPose();
 
-        float fs = Config.CLIENT.hudScale.get().floatValue();
-        g.pose().pushPose();
-        g.pose().scale(fs, fs, 1f);
-        Gfx.vw = Math.round(g.guiWidth() / fs);
-        Gfx.vh = Math.round(g.guiHeight() / fs);
-        FuelPanel.render(g, now, p);
-        g.pose().popPose();
-
         EyesPanel.render(g, now);
     }
 }

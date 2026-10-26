@@ -10,18 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 public record ActionPayload(int action) implements CustomPacketPayload {
     public static final int OPEN_BACKPACK = 0;
     public static final int TAKE_OFF_BACKPACK = 1;
-    public static final int EXIT_VEHICLE = 2;
-    public static final int PRIMARY = 3;
-    public static final int SECONDARY = 4;
-    public static final int CRASH = 5;
-    public static final int WRAITH_ON = 6;
-    public static final int WRAITH_OFF = 7;
-    public static final int VOID_TOGGLE = 8;
-    public static final int DASH = 9;
-    public static final int SHOCKWAVE = 10;
-    public static final int TENDRILS = 11;
-    public static final int DEVOUR = 12;
-    public static final int SINGULARITY = 13;
 
     public static final Type<ActionPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(ModeHud.MODID, "action"));
 

@@ -2,7 +2,6 @@ package dev.zedkodex.modehud.server;
 
 import dev.zedkodex.modehud.ModeHud;
 import dev.zedkodex.modehud.data.BackpackData;
-import dev.zedkodex.modehud.entity.Plane;
 import dev.zedkodex.modehud.net.ActionPayload;
 import dev.zedkodex.modehud.net.BackpackPayload;
 import net.minecraft.core.component.DataComponents;
@@ -12,7 +11,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -25,32 +23,9 @@ public final class Actions {
         switch (action) {
             case ActionPayload.OPEN_BACKPACK -> openBackpack(p);
             case ActionPayload.TAKE_OFF_BACKPACK -> takeOffBackpack(p);
-            case ActionPayload.EXIT_VEHICLE -> exit(p);
-            case ActionPayload.PRIMARY -> {
-                if (p.getVehicle() instanceof Plane plane && plane.getControllingPassenger() == p) plane.primary(p);
-            }
-            case ActionPayload.SECONDARY -> {
-                if (p.getVehicle() instanceof Plane plane && plane.getControllingPassenger() == p) plane.secondary(p);
-            }
-            case ActionPayload.CRASH -> {
-                if (p.getVehicle() instanceof Plane plane && plane.measuredSpeed() > 0.35) plane.crash();
-            }
-            case ActionPayload.WRAITH_ON -> Wraith.toggle(p, true);
-            case ActionPayload.WRAITH_OFF -> Wraith.toggle(p, false);
-            case ActionPayload.VOID_TOGGLE -> VoidForm.toggle(p);
             default -> {
             }
         }
-    }
-
-    private static void exit(ServerPlayer p) {
-        Entity v = p.getVehicle();
-        if (v == null) return;
-        if (v instanceof Plane plane && !plane.mayExit()) {
-            p.displayClientMessage(Component.translatable("message.modehud.land_first"), true);
-            return;
-        }
-        p.stopRiding();
     }
 
     public static void syncBackpack(ServerPlayer p) {

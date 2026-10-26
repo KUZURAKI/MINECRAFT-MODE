@@ -2,8 +2,6 @@
   "replace": false,
   "values": [
     "modehud:bleed",
-    "modehud:thirst",
-    "modehud:crush",
-    "modehud:erase"
+    "modehud:thirst"
   ]
 }
